@@ -1,0 +1,12 @@
+name = "moon-shop-generator"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "moonshop-db"
+database_id = "192e1a10-a921-4d80-99c4-a00d196a94cf"
+
+[[kv_namespaces]]
+binding = "ASSET_KV"
+id = "f1cb480643b24d46bc590f2b99cc5592"
