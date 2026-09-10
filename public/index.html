@@ -1836,7 +1836,7 @@
   inset: 0 !important;
   background: rgba(0,0,0,0.85) !important;
   z-index: 99999 !important;
-  align-items: center !important;
+  align-items: flex-end !important;
   justify-content: center !important;
   touch-action: none !important;
 }
@@ -1847,20 +1847,27 @@
 
 #radialMenu {
   position: relative !important;
-  width: 280px !important;
-  height: 280px !important;
-  margin: auto !important;
-  display: block !important;
+  width: 100% !important;
+  max-width: 480px !important;
+  max-height: 72vh !important;
+  overflow-y: auto !important;
+  margin: 0 auto !important;
+  padding: 16px 12px 90px !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 10px !important;
+  background: #0d0e16 !important;
+  border-top: 1px solid #282a3e !important;
+  border-radius: 18px 18px 0 0 !important;
+  box-sizing: border-box !important;
 }
 
 .radial-item {
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  width: 56px !important;
-  height: 56px !important;
-  margin: -28px !important;
-  border-radius: 50% !important;
+  position: static !important;
+  width: auto !important;
+  height: 72px !important;
+  margin: 0 !important;
+  border-radius: 12px !important;
   background: #141522 !important;
   border: 1.5px solid #282a3e !important;
   color: #ffffff !important;
@@ -1868,12 +1875,12 @@
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 1px !important;
+  gap: 4px !important;
   font-size: 15px !important;
   cursor: pointer !important;
-  padding: 0 !important;
+  padding: 4px !important;
   flex: none !important;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.7) !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4) !important;
   user-select: none !important;
   transition: transform 0.15s, background 0.15s !important;
 }
@@ -1885,23 +1892,29 @@
 }
 
 .radial-item span.lbl {
-  font-size: 8px !important;
+  font-size: 9.5px !important;
   color: #888899 !important;
-  line-height: 1 !important;
+  line-height: 1.1 !important;
   pointer-events: none !important;
+  text-align: center !important;
 }
 
 .radial-item:active span.lbl, .radial-item:hover span.lbl {
   color: #000000 !important;
 }
 
+@media (max-width: 420px) {
+  #radialMenu { grid-template-columns: repeat(3, 1fr) !important; }
+}
+
 #radialCenterBtn {
-  position: absolute !important;
-  top: 50% !important;
+  position: fixed !important;
+  bottom: 18px !important;
   left: 50% !important;
-  width: 44px !important;
-  height: 44px !important;
-  margin: -22px !important;
+  transform: translateX(-50%) !important;
+  width: 48px !important;
+  height: 48px !important;
+  margin: 0 !important;
   border-radius: 50% !important;
   background: #ffffff !important;
   color: #000000 !important;
@@ -1912,7 +1925,7 @@
   font-weight: 700 !important;
   border: none !important;
   cursor: pointer !important;
-  z-index: 10 !important;
+  z-index: 100000 !important;
   padding: 0 !important;
   flex: none !important;
   box-shadow: 0 4px 15px rgba(0,0,0,0.6) !important;
@@ -14418,16 +14431,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function openRadialMenu(){
     const menu = document.getElementById('radialMenu');
     menu.innerHTML = '';
-    const n = RADIAL_ITEMS.length;
-    const radius = 100;
-    RADIAL_ITEMS.forEach((item, i)=>{
-      const angle = (i/n) * Math.PI*2 - Math.PI/2;
-      const x = Math.cos(angle)*radius;
-      const y = Math.sin(angle)*radius;
+    RADIAL_ITEMS.forEach((item)=>{
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'radial-item';
-      btn.style.transform = `translate(${x}px, ${y}px)`;
       btn.innerHTML = `<span>${item.icon}</span><span class="lbl">${item.label}</span>`;
       btn.addEventListener('click', (e)=>{
         e.stopPropagation();
