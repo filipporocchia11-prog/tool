@@ -15004,14 +15004,29 @@ document.addEventListener('DOMContentLoaded', () => {
         let seed = 555;
         const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return (seed % 10000) / 10000; };
         const cell = Math.max(6, spacing);
+        // warstwa 1: drobna, gęsta faktura tła (subtelna)
+        const fineCell = cell * 0.45;
+        for (let x = -fineCell; x < w + fineCell; x += fineCell) {
+          for (let y = -fineCell; y < h + fineCell; y += fineCell) {
+            if (rnd() < 0.4) continue;
+            const jx = offsetX + x + rnd() * fineCell;
+            const jy = offsetY + y + rnd() * fineCell;
+            const s = fineCell * (0.25 + rnd() * 0.6);
+            c.save();
+            c.globalAlpha *= 0.08 + rnd() * 0.14;
+            drawPuddleBlob(c, jx, jy, s * 0.5, rnd);
+            c.restore();
+          }
+        }
+        // warstwa 2: rzadkie, większe akcenty
         for (let x = -cell; x < w + cell; x += cell) {
           for (let y = -cell; y < h + cell; y += cell) {
-            if (rnd() < 0.25) continue;
+            if (rnd() < 0.62) continue;
             const jx = offsetX + x + rnd() * cell;
             const jy = offsetY + y + rnd() * cell;
-            const s = cell * (0.3 + rnd() * 1.6);
+            const s = cell * (0.4 + rnd() * 1.1);
             c.save();
-            c.globalAlpha *= (p.type === 'denim') ? (rnd() < 0.5 ? 0.35 : 1) : (0.5 + rnd() * 0.5);
+            c.globalAlpha *= 0.15 + rnd() * 0.25;
             drawPuddleBlob(c, jx, jy, s * 0.5, rnd);
             c.restore();
           }
