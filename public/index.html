@@ -4253,7 +4253,17 @@ zakazane serwery</textarea>
             <button class="ghost" id="assetsNewFolderBtn">+ Nowy folder</button>
           </div>
         </div>
-        <input type="text" id="assetsSearchInput" placeholder="🔍 Szukaj po nazwie..." style="width:100%; box-sizing:border-box; margin-top:10px; background:#0d1013; color:var(--ink); border:1px solid var(--panel-edge); border-radius:9px; padding:10px 13px; font-size:13px; outline:none;">
+        <div style="display:flex; gap:10px; margin-top:10px;">
+          <input type="text" id="assetsSearchInput" placeholder="🔍 Szukaj po nazwie..." style="flex:1; box-sizing:border-box; background:#0d1013; color:var(--ink); border:1px solid var(--panel-edge); border-radius:9px; padding:10px 13px; font-size:13px; outline:none;">
+          <select id="assetsSortSelect" style="background:#0d1013; color:var(--ink); border:1px solid var(--panel-edge); border-radius:9px; padding:10px 13px; font-size:13px; outline:none;">
+            <option value="name_asc">Nazwa A-Z</option>
+            <option value="name_desc">Nazwa Z-A</option>
+            <option value="size_asc">Rozmiar rosnąco</option>
+            <option value="size_desc">Rozmiar malejąco</option>
+            <option value="newest">Najnowsze</option>
+            <option value="oldest">Najstarsze</option>
+          </select>
+        </div>
 
         <div class="dropzone" id="assetsDropzone" style="margin-top:14px;">
           Wrzuć tu pliki albo kliknij, żeby wybrać z dysku
@@ -9968,6 +9978,7 @@ function formatBytes(n) {
 }
 
 var assetsSearchQuery = '';
+var assetsSortMode = 'name_asc';
 
 async function renderAssetsPane() {
   let foldersData, assetsData;
@@ -10047,7 +10058,15 @@ const ASSET_USE_TARGETS = [
 
 function renderAssetsFileGrid() {
   const q = assetsSearchQuery.trim().toLowerCase();
-  const list = q ? currentFolderAssets.filter(a => a.name.toLowerCase().includes(q)) : currentFolderAssets;
+  let list = q ? currentFolderAssets.filter(a => a.name.toLowerCase().startsWith(q)) : currentFolderAssets.slice();
+  switch (assetsSortMode) {
+    case 'name_desc': list.sort((a, b) => b.name.localeCompare(a.name, 'pl')); break;
+    case 'size_asc': list.sort((a, b) => a.size_bytes - b.size_bytes); break;
+    case 'size_desc': list.sort((a, b) => b.size_bytes - a.size_bytes); break;
+    case 'newest': list.sort((a, b) => b.id - a.id); break;
+    case 'oldest': list.sort((a, b) => a.id - b.id); break;
+    default: list.sort((a, b) => a.name.localeCompare(b.name, 'pl'));
+  }
 
   assetsFileGrid.innerHTML = '';
   list.forEach(a => {
@@ -10380,6 +10399,10 @@ document.getElementById('assetsAddSelectedToBatch').addEventListener('click', ad
 document.getElementById('assetsDownloadSelected').addEventListener('click', downloadSelectedAssetsZip);
 document.getElementById('assetsSearchInput').addEventListener('input', (e) => {
   assetsSearchQuery = e.target.value;
+  renderAssetsFileGrid();
+});
+document.getElementById('assetsSortSelect').addEventListener('change', (e) => {
+  assetsSortMode = e.target.value;
   renderAssetsFileGrid();
 });
 document.getElementById('assetsDeleteSelected').addEventListener('click', async () => {
