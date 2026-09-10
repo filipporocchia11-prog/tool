@@ -4254,8 +4254,8 @@ zakazane serwery</textarea>
           </div>
         </div>
         <div style="display:flex; gap:10px; margin-top:10px;">
-          <input type="text" id="assetsSearchInput" placeholder="🔍 Szukaj po nazwie..." style="flex:1; box-sizing:border-box; background:#0d1013; color:var(--ink); border:1px solid var(--panel-edge); border-radius:9px; padding:10px 13px; font-size:13px; outline:none;">
-          <select id="assetsSortSelect" style="background:#0d1013; color:var(--ink); border:1px solid var(--panel-edge); border-radius:9px; padding:10px 13px; font-size:13px; outline:none;">
+          <input type="text" id="assetsSearchInput" placeholder="🔍 Szukaj po nazwie..." style="flex:1 1 auto; min-width:0; width:auto; box-sizing:border-box; background:#0d1013; color:var(--ink); border:1px solid var(--panel-edge); border-radius:9px; padding:10px 13px; font-size:13px; outline:none;">
+          <select id="assetsSortSelect" style="flex:0 0 auto; max-width:180px; box-sizing:border-box; background:#0d1013; color:var(--ink); border:1px solid var(--panel-edge); border-radius:9px; padding:10px 13px; font-size:13px; outline:none;">
             <option value="name_asc">Nazwa A-Z</option>
             <option value="name_desc">Nazwa Z-A</option>
             <option value="size_asc">Rozmiar rosnąco</option>
@@ -19158,6 +19158,8 @@ if(fDz && fInp) {
   let pickerCurrentFolderId = null;
   let pickerFolders = [];
   let pickerAssets = [];
+  let pickerSearchQuery = '';
+  let pickerSortMode = 'name_asc';
 
   function ensureModalHtml() {
     if (document.getElementById('globalAssetPickerModal')) return;
@@ -19169,6 +19171,17 @@ if(fDz && fInp) {
     </div>
     <div class="asset-picker-body">
       <div class="asset-picker-breadcrumb" id="globalPickerBreadcrumb"></div>
+      <div style="display:flex; gap:10px; margin-bottom:10px;">
+        <input type="text" id="globalPickerSearch" placeholder="🔍 Szukaj po nazwie..." style="flex:1 1 auto; min-width:0; box-sizing:border-box; background:#0d1013; color:var(--ink); border:1px solid var(--panel-edge); border-radius:9px; padding:10px 13px; font-size:13px; outline:none;">
+        <select id="globalPickerSort" style="flex:0 0 auto; max-width:180px; box-sizing:border-box; background:#0d1013; color:var(--ink); border:1px solid var(--panel-edge); border-radius:9px; padding:10px 13px; font-size:13px; outline:none;">
+          <option value="name_asc">Nazwa A-Z</option>
+          <option value="name_desc">Nazwa Z-A</option>
+          <option value="size_asc">Rozmiar rosnąco</option>
+          <option value="size_desc">Rozmiar malejąco</option>
+          <option value="newest">Najnowsze</option>
+          <option value="oldest">Najstarsze</option>
+        </select>
+      </div>
       <div class="asset-picker-grid" id="globalPickerGrid"></div>
       <p id="globalPickerEmpty" class="hint" style="display:none; text-align:center; padding:20px 0;">Brak plików w tym folderze.</p>
     </div>
@@ -19177,6 +19190,14 @@ if(fDz && fInp) {
     document.getElementById('assetPickerCloseBtn').addEventListener('click', closeAssetPicker);
     document.getElementById('globalAssetPickerModal').addEventListener('click', (e) => {
       if (e.target.id === 'globalAssetPickerModal') closeAssetPicker();
+    });
+    document.getElementById('globalPickerSearch').addEventListener('input', (e) => {
+      pickerSearchQuery = e.target.value;
+      renderPickerView();
+    });
+    document.getElementById('globalPickerSort').addEventListener('change', (e) => {
+      pickerSortMode = e.target.value;
+      renderPickerView();
     });
   }
 
@@ -19256,7 +19277,18 @@ if(fDz && fInp) {
       grid.appendChild(item);
     });
 
-    pickerAssets.forEach(a => {
+    const q = pickerSearchQuery.trim().toLowerCase();
+    let shownAssets = q ? pickerAssets.filter(a => a.name.toLowerCase().startsWith(q)) : pickerAssets.slice();
+    switch (pickerSortMode) {
+      case 'name_desc': shownAssets.sort((a, b) => b.name.localeCompare(a.name, 'pl')); break;
+      case 'size_asc': shownAssets.sort((a, b) => a.size_bytes - b.size_bytes); break;
+      case 'size_desc': shownAssets.sort((a, b) => b.size_bytes - a.size_bytes); break;
+      case 'newest': shownAssets.sort((a, b) => b.id - a.id); break;
+      case 'oldest': shownAssets.sort((a, b) => a.id - b.id); break;
+      default: shownAssets.sort((a, b) => a.name.localeCompare(b.name, 'pl'));
+    }
+
+    shownAssets.forEach(a => {
       const item = document.createElement('div');
       item.className = 'asset-picker-item';
       const url = '/api/assets/' + a.id;
@@ -19270,13 +19302,17 @@ if(fDz && fInp) {
       grid.appendChild(item);
     });
 
-    empty.style.display = (childF.length === 0 && pickerAssets.length === 0) ? 'block' : 'none';
+    empty.style.display = (childF.length === 0 && shownAssets.length === 0) ? 'block' : 'none';
   }
 
   window.openAssetPicker = function(callback) {
     ensureModalHtml();
     pickerCallback = callback;
     pickerCurrentFolderId = null;
+    pickerSearchQuery = '';
+    pickerSortMode = 'name_asc';
+    const s = document.getElementById('globalPickerSearch'); if (s) s.value = '';
+    const so = document.getElementById('globalPickerSort'); if (so) so.value = 'name_asc';
     document.getElementById('globalAssetPickerModal').style.display = 'flex';
     loadPickerData();
   };
