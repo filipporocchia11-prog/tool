@@ -3535,6 +3535,7 @@
           <div class="row"><label>Rozstaw</label><input type="range" id="f_patSpacing" min="4" max="200" value="20"><input type="number" class="val-input" id="f_patSpacing_val" value="20"></div>
           <div class="row" id="patThicknessRow"><label>Grubość</label><input type="range" id="f_patThickness" min="1" max="12" value="1"><input type="number" class="val-input" id="f_patThickness_val" value="1"></div>
           <div class="row"><label>Kolor</label><input type="color" id="f_patColor" value="#ffffff"></div>
+          <div class="row" id="patRandomizeRow" style="display:none;"><label>Losowe rozmieszczenie</label><label class="switch"><input type="checkbox" id="f_patRandomize"> gdzieniegdzie duże, gdzieniegdzie małe</label></div>
         </div>
 
         <div class="sec">
@@ -14965,6 +14966,28 @@ document.addEventListener('DOMContentLoaded', () => {
     return tile;
   }
 
+  function drawPuddleBlob(c, cx, cy, r, rnd) {
+    const points = 7 + Math.floor(rnd() * 5);
+    const angleStep = Math.PI * 2 / points;
+    const pts = [];
+    for (let i = 0; i < points; i++) {
+      const angle = i * angleStep + rnd() * angleStep * 0.5;
+      const rad = r * (0.55 + rnd() * 0.9);
+      pts.push({ x: cx + Math.cos(angle) * rad, y: cy + Math.sin(angle) * rad });
+    }
+    c.beginPath();
+    const last = pts[pts.length - 1];
+    c.moveTo((last.x + pts[0].x) / 2, (last.y + pts[0].y) / 2);
+    for (let i = 0; i < pts.length; i++) {
+      const p0 = pts[i];
+      const p1 = pts[(i + 1) % pts.length];
+      const mx = (p0.x + p1.x) / 2, my = (p0.y + p1.y) / 2;
+      c.quadraticCurveTo(p0.x, p0.y, mx, my);
+    }
+    c.closePath();
+    c.fill();
+  }
+
   function drawPatternOverlay(c, p, w, h, offsetX, offsetY) {
     if (!p || p.type === 'none') return;
     offsetX = offsetX || 0;
@@ -14977,12 +15000,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const spacing = Math.max(4, p.spacing || 40);
 
     if (p.type === 'fabric' || p.type === 'denim' || p.type === 'grain') {
-      const tileScale = Math.max(4, Math.round(spacing / 4));
-      const tile = createFabricTile(p.color, tileScale, p.type);
-      const pat = c.createPattern(tile, 'repeat');
-      if (pat) {
-        c.fillStyle = pat;
-        c.fillRect(offsetX, offsetY, w, h);
+      if (p.randomize && (p.type === 'fabric' || p.type === 'denim')) {
+        let seed = 555;
+        const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return (seed % 10000) / 10000; };
+        const cell = Math.max(6, spacing);
+        for (let x = -cell; x < w + cell; x += cell) {
+          for (let y = -cell; y < h + cell; y += cell) {
+            if (rnd() < 0.25) continue;
+            const jx = offsetX + x + rnd() * cell;
+            const jy = offsetY + y + rnd() * cell;
+            const s = cell * (0.3 + rnd() * 1.6);
+            c.save();
+            c.globalAlpha *= (p.type === 'denim') ? (rnd() < 0.5 ? 0.35 : 1) : (0.5 + rnd() * 0.5);
+            drawPuddleBlob(c, jx, jy, s * 0.5, rnd);
+            c.restore();
+          }
+        }
+      } else {
+        const tileScale = Math.max(4, Math.round(spacing / 4));
+        const tile = createFabricTile(p.color, tileScale, p.type);
+        const pat = c.createPattern(tile, 'repeat');
+        if (pat) {
+          c.fillStyle = pat;
+          c.fillRect(offsetX, offsetY, w, h);
+        }
       }
     } else if (p.type === 'grid') {
       c.beginPath();
@@ -14991,9 +15032,23 @@ document.addEventListener('DOMContentLoaded', () => {
       c.stroke();
     } else if (p.type === 'dots') {
       const r = Math.max(0.5, (p.thickness || 1) * 0.9);
-      for (let x = spacing / 2; x < w; x += spacing) {
-        for (let y = spacing / 2; y < h; y += spacing) {
-          c.beginPath(); c.arc(offsetX + x, offsetY + y, r, 0, Math.PI * 2); c.fill();
+      if (p.randomize) {
+        let seed = 777;
+        const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return (seed % 10000) / 10000; };
+        for (let x = spacing / 2; x < w; x += spacing) {
+          for (let y = spacing / 2; y < h; y += spacing) {
+            if (rnd() < 0.3) continue;
+            const jx = (rnd() - 0.5) * spacing * 0.8;
+            const jy = (rnd() - 0.5) * spacing * 0.8;
+            const rr = r * (0.4 + rnd() * 2.2);
+            drawPuddleBlob(c, offsetX + x + jx, offsetY + y + jy, rr, rnd);
+          }
+        }
+      } else {
+        for (let x = spacing / 2; x < w; x += spacing) {
+          for (let y = spacing / 2; y < h; y += spacing) {
+            c.beginPath(); c.arc(offsetX + x, offsetY + y, r, 0, Math.PI * 2); c.fill();
+          }
         }
       }
     } else if (p.type === 'diagonal') {
@@ -15006,13 +15061,32 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (p.type === 'cross') {
       const s = Math.max(2, (p.thickness || 1));
       const arm = Math.max(3, spacing * 0.15);
-      for (let x = spacing / 2; x < w; x += spacing) {
-        for (let y = spacing / 2; y < h; y += spacing) {
-          c.beginPath();
-          c.moveTo(offsetX + x - arm, offsetY + y); c.lineTo(offsetX + x + arm, offsetY + y);
-          c.moveTo(offsetX + x, offsetY + y - arm); c.lineTo(offsetX + x, offsetY + y + arm);
-          c.lineWidth = s;
-          c.stroke();
+      if (p.randomize) {
+        let seed = 999;
+        const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return (seed % 10000) / 10000; };
+        for (let x = spacing / 2; x < w; x += spacing) {
+          for (let y = spacing / 2; y < h; y += spacing) {
+            if (rnd() < 0.3) continue;
+            const jx = (rnd() - 0.5) * spacing * 0.8;
+            const jy = (rnd() - 0.5) * spacing * 0.8;
+            const armR = arm * (0.4 + rnd() * 2.2);
+            const cx = offsetX + x + jx, cy = offsetY + y + jy;
+            c.beginPath();
+            c.moveTo(cx - armR, cy); c.lineTo(cx + armR, cy);
+            c.moveTo(cx, cy - armR); c.lineTo(cx, cy + armR);
+            c.lineWidth = s;
+            c.stroke();
+          }
+        }
+      } else {
+        for (let x = spacing / 2; x < w; x += spacing) {
+          for (let y = spacing / 2; y < h; y += spacing) {
+            c.beginPath();
+            c.moveTo(offsetX + x - arm, offsetY + y); c.lineTo(offsetX + x + arm, offsetY + y);
+            c.moveTo(offsetX + x, offsetY + y - arm); c.lineTo(offsetX + x, offsetY + y + arm);
+            c.lineWidth = s;
+            c.stroke();
+          }
         }
       }
     } else if (p.type === 'wave') {
@@ -15204,8 +15278,14 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('[data-ptype]').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('patThicknessRow').style.display = a.pattern.patternType==='diagonal' ? 'none':'flex';
+      document.getElementById('patRandomizeRow').style.display = (a.pattern.patternType==='dots'||a.pattern.patternType==='cross'||a.pattern.patternType==='denim'||a.pattern.patternType==='fabric') ? 'flex':'none';
       render();
     });
+  });
+  document.getElementById('f_patRandomize').addEventListener('change', e=>{
+    const a=getActive(); if(!a || a.type!=='pattern') return;
+    a.pattern.randomize = e.target.checked;
+    render();
   });
   
   bindRange('f_waveW', v=>{ const a=getActive(); if(a && a.type==='wave') a.width=v; });
@@ -16305,6 +16385,8 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('f_patColor').value = a.pattern.color;
       document.querySelectorAll('[data-ptype]').forEach(b=>b.classList.toggle('active', b.dataset.ptype===a.pattern.patternType));
       document.getElementById('patThicknessRow').style.display = a.pattern.patternType==='diagonal' ? 'none':'flex';
+      document.getElementById('patRandomizeRow').style.display = (a.pattern.patternType==='dots'||a.pattern.patternType==='cross'||a.pattern.patternType==='denim'||a.pattern.patternType==='fabric') ? 'flex':'none';
+      document.getElementById('f_patRandomize').checked = !!a.pattern.randomize;
       setRange('f_patOpacity', a.opacity);
 
       if(!a.pattern.mask) a.pattern.mask = {type:'none', reachX:150, reachY:150, softness:40};
@@ -17226,7 +17308,7 @@ document.addEventListener('DOMContentLoaded', () => {
       c.beginPath();
       c.rect(pad, pad, layer.width, layer.height);
       c.clip();
-      drawPatternOverlay(c, {type:p.patternType, spacing:p.spacing, thickness:p.thickness, color:p.color, opacity:100}, layer.width, layer.height, pad, pad);
+      drawPatternOverlay(c, {type:p.patternType, spacing:p.spacing, thickness:p.thickness, color:p.color, opacity:100, randomize:p.randomize}, layer.width, layer.height, pad, pad);
       c.restore();
     }
 
