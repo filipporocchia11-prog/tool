@@ -14985,6 +14985,32 @@ document.addEventListener('DOMContentLoaded', () => {
     c.closePath();
   }
 
+  function makeRng(seed) {
+    let a = seed >>> 0;
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = (t + Math.imul(t ^ t >>> 7, 61 | t)) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  function clipRandomZones(c, w, h, offsetX, offsetY, rnd) {
+    c.beginPath();
+    const cols = 2, rows = 2;
+    const cw = w / cols, ch = h / rows;
+    for (let cy = 0; cy < rows; cy++) {
+      for (let cx = 0; cx < cols; cx++) {
+        if (rnd() < 0.25) continue;
+        const zcx = offsetX + cx * cw + rnd() * cw;
+        const zcy = offsetY + cy * ch + rnd() * ch;
+        const zr = Math.min(cw, ch) * (0.55 + rnd() * 0.35);
+        buildBlobPath(c, zcx, zcy, zr, rnd);
+      }
+    }
+    c.clip();
+  }
+
   function drawPuddleBlob(c, cx, cy, r, rnd) {
     c.beginPath();
     buildBlobPath(c, cx, cy, r, rnd);
@@ -15005,28 +15031,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (p.type === 'fabric' || p.type === 'denim' || p.type === 'grain') {
       if (p.randomize && (p.type === 'fabric' || p.type === 'denim')) {
         let seed = 555;
-        const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return (seed % 10000) / 10000; };
+        const rnd = makeRng(seed);
         const cell = Math.max(6, spacing);
         c.save();
-        c.beginPath();
-        const zoneCount = 2 + Math.floor(rnd() * 3);
-        for (let i = 0; i < zoneCount; i++) {
-          const zcx = offsetX + rnd() * w;
-          const zcy = offsetY + rnd() * h;
-          const zr = Math.min(w, h) * (0.22 + rnd() * 0.3);
-          buildBlobPath(c, zcx, zcy, zr, rnd);
-        }
-        c.clip();
+        clipRandomZones(c, w, h, offsetX, offsetY, rnd);
         // warstwa 1: drobna, gęsta faktura tła (subtelna)
         const fineCell = cell * 0.45;
         for (let x = -fineCell; x < w + fineCell; x += fineCell) {
           for (let y = -fineCell; y < h + fineCell; y += fineCell) {
-            if (rnd() < 0.4) continue;
+            if (rnd() < 0.55) continue;
             const jx = offsetX + x + rnd() * fineCell;
             const jy = offsetY + y + rnd() * fineCell;
-            const s = fineCell * (0.25 + rnd() * 0.6);
+            const s = fineCell * (0.3 + rnd() * 0.6);
             c.save();
-            c.globalAlpha *= 0.08 + rnd() * 0.14;
+            c.globalAlpha *= 0.1 + rnd() * 0.16;
             drawPuddleBlob(c, jx, jy, s * 0.5, rnd);
             c.restore();
           }
@@ -15062,15 +15080,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (p.type === 'dots') {
       const r = Math.max(0.5, (p.thickness || 1) * 0.9);
       if (p.randomize) {
-        let seed = 777;
-        const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return (seed % 10000) / 10000; };
+        const rnd = makeRng(777);
         c.save();
-        c.beginPath();
-        const zoneCount = 2 + Math.floor(rnd() * 3);
-        for (let i = 0; i < zoneCount; i++) {
-          buildBlobPath(c, offsetX + rnd() * w, offsetY + rnd() * h, Math.min(w, h) * (0.22 + rnd() * 0.3), rnd);
-        }
-        c.clip();
+        clipRandomZones(c, w, h, offsetX, offsetY, rnd);
         for (let x = spacing / 2; x < w; x += spacing) {
           for (let y = spacing / 2; y < h; y += spacing) {
             if (rnd() < 0.3) continue;
@@ -15099,15 +15111,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const s = Math.max(2, (p.thickness || 1));
       const arm = Math.max(3, spacing * 0.15);
       if (p.randomize) {
-        let seed = 999;
-        const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return (seed % 10000) / 10000; };
+        const rnd = makeRng(999);
         c.save();
-        c.beginPath();
-        const zoneCount = 2 + Math.floor(rnd() * 3);
-        for (let i = 0; i < zoneCount; i++) {
-          buildBlobPath(c, offsetX + rnd() * w, offsetY + rnd() * h, Math.min(w, h) * (0.22 + rnd() * 0.3), rnd);
-        }
-        c.clip();
+        clipRandomZones(c, w, h, offsetX, offsetY, rnd);
         for (let x = spacing / 2; x < w; x += spacing) {
           for (let y = spacing / 2; y < h; y += spacing) {
             if (rnd() < 0.3) continue;
@@ -15146,8 +15152,7 @@ document.addEventListener('DOMContentLoaded', () => {
         c.stroke();
       }
     } else if (p.type === 'splatter') {
-      let seed = 1337;
-      const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return (seed % 10000) / 10000; };
+      const rnd = makeRng(1337);
       const cell = Math.max(6, spacing);
       for (let x = -cell; x < w + cell; x += cell) {
         for (let y = -cell; y < h + cell; y += cell) {
