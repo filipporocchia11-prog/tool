@@ -15030,11 +15030,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (p.type === 'fabric' || p.type === 'denim' || p.type === 'grain') {
       if (p.randomize && (p.type === 'fabric' || p.type === 'denim')) {
-        let seed = 555;
-        const rnd = makeRng(seed);
+        const rnd = makeRng(555);
         const cell = Math.max(6, spacing);
-        c.save();
-        clipRandomZones(c, w, h, offsetX, offsetY, rnd);
         // warstwa 1: drobna, gęsta faktura tła (subtelna)
         const fineCell = cell * 0.45;
         for (let x = -fineCell; x < w + fineCell; x += fineCell) {
@@ -15062,7 +15059,6 @@ document.addEventListener('DOMContentLoaded', () => {
             c.restore();
           }
         }
-        c.restore();
       } else {
         const tileScale = Math.max(4, Math.round(spacing / 4));
         const tile = createFabricTile(p.color, tileScale, p.type);
@@ -15081,8 +15077,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const r = Math.max(0.5, (p.thickness || 1) * 0.9);
       if (p.randomize) {
         const rnd = makeRng(777);
-        c.save();
-        clipRandomZones(c, w, h, offsetX, offsetY, rnd);
         for (let x = spacing / 2; x < w; x += spacing) {
           for (let y = spacing / 2; y < h; y += spacing) {
             if (rnd() < 0.3) continue;
@@ -15092,7 +15086,6 @@ document.addEventListener('DOMContentLoaded', () => {
             drawPuddleBlob(c, offsetX + x + jx, offsetY + y + jy, rr, rnd);
           }
         }
-        c.restore();
       } else {
         for (let x = spacing / 2; x < w; x += spacing) {
           for (let y = spacing / 2; y < h; y += spacing) {
@@ -15112,8 +15105,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const arm = Math.max(3, spacing * 0.15);
       if (p.randomize) {
         const rnd = makeRng(999);
-        c.save();
-        clipRandomZones(c, w, h, offsetX, offsetY, rnd);
         for (let x = spacing / 2; x < w; x += spacing) {
           for (let y = spacing / 2; y < h; y += spacing) {
             if (rnd() < 0.3) continue;
@@ -15128,7 +15119,6 @@ document.addEventListener('DOMContentLoaded', () => {
             c.stroke();
           }
         }
-        c.restore();
       } else {
         for (let x = spacing / 2; x < w; x += spacing) {
           for (let y = spacing / 2; y < h; y += spacing) {
