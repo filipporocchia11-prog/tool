@@ -14966,7 +14966,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return tile;
   }
 
-  function drawPuddleBlob(c, cx, cy, r, rnd) {
+  function buildBlobPath(c, cx, cy, r, rnd) {
     const points = 7 + Math.floor(rnd() * 5);
     const angleStep = Math.PI * 2 / points;
     const pts = [];
@@ -14975,16 +14975,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const rad = r * (0.55 + rnd() * 0.9);
       pts.push({ x: cx + Math.cos(angle) * rad, y: cy + Math.sin(angle) * rad });
     }
-    c.beginPath();
     const last = pts[pts.length - 1];
     c.moveTo((last.x + pts[0].x) / 2, (last.y + pts[0].y) / 2);
     for (let i = 0; i < pts.length; i++) {
-      const p0 = pts[i];
-      const p1 = pts[(i + 1) % pts.length];
+      const p0 = pts[i], p1 = pts[(i + 1) % pts.length];
       const mx = (p0.x + p1.x) / 2, my = (p0.y + p1.y) / 2;
       c.quadraticCurveTo(p0.x, p0.y, mx, my);
     }
     c.closePath();
+  }
+
+  function drawPuddleBlob(c, cx, cy, r, rnd) {
+    c.beginPath();
+    buildBlobPath(c, cx, cy, r, rnd);
     c.fill();
   }
 
@@ -15004,6 +15007,16 @@ document.addEventListener('DOMContentLoaded', () => {
         let seed = 555;
         const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return (seed % 10000) / 10000; };
         const cell = Math.max(6, spacing);
+        c.save();
+        c.beginPath();
+        const zoneCount = 2 + Math.floor(rnd() * 3);
+        for (let i = 0; i < zoneCount; i++) {
+          const zcx = offsetX + rnd() * w;
+          const zcy = offsetY + rnd() * h;
+          const zr = Math.min(w, h) * (0.22 + rnd() * 0.3);
+          buildBlobPath(c, zcx, zcy, zr, rnd);
+        }
+        c.clip();
         // warstwa 1: drobna, gęsta faktura tła (subtelna)
         const fineCell = cell * 0.45;
         for (let x = -fineCell; x < w + fineCell; x += fineCell) {
@@ -15031,6 +15044,7 @@ document.addEventListener('DOMContentLoaded', () => {
             c.restore();
           }
         }
+        c.restore();
       } else {
         const tileScale = Math.max(4, Math.round(spacing / 4));
         const tile = createFabricTile(p.color, tileScale, p.type);
@@ -15050,6 +15064,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (p.randomize) {
         let seed = 777;
         const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return (seed % 10000) / 10000; };
+        c.save();
+        c.beginPath();
+        const zoneCount = 2 + Math.floor(rnd() * 3);
+        for (let i = 0; i < zoneCount; i++) {
+          buildBlobPath(c, offsetX + rnd() * w, offsetY + rnd() * h, Math.min(w, h) * (0.22 + rnd() * 0.3), rnd);
+        }
+        c.clip();
         for (let x = spacing / 2; x < w; x += spacing) {
           for (let y = spacing / 2; y < h; y += spacing) {
             if (rnd() < 0.3) continue;
@@ -15059,6 +15080,7 @@ document.addEventListener('DOMContentLoaded', () => {
             drawPuddleBlob(c, offsetX + x + jx, offsetY + y + jy, rr, rnd);
           }
         }
+        c.restore();
       } else {
         for (let x = spacing / 2; x < w; x += spacing) {
           for (let y = spacing / 2; y < h; y += spacing) {
@@ -15079,6 +15101,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (p.randomize) {
         let seed = 999;
         const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return (seed % 10000) / 10000; };
+        c.save();
+        c.beginPath();
+        const zoneCount = 2 + Math.floor(rnd() * 3);
+        for (let i = 0; i < zoneCount; i++) {
+          buildBlobPath(c, offsetX + rnd() * w, offsetY + rnd() * h, Math.min(w, h) * (0.22 + rnd() * 0.3), rnd);
+        }
+        c.clip();
         for (let x = spacing / 2; x < w; x += spacing) {
           for (let y = spacing / 2; y < h; y += spacing) {
             if (rnd() < 0.3) continue;
@@ -15093,6 +15122,7 @@ document.addEventListener('DOMContentLoaded', () => {
             c.stroke();
           }
         }
+        c.restore();
       } else {
         for (let x = spacing / 2; x < w; x += spacing) {
           for (let y = spacing / 2; y < h; y += spacing) {
