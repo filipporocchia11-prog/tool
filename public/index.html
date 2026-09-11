@@ -3535,6 +3535,7 @@
           <div class="row"><label>Rozstaw</label><input type="range" id="f_patSpacing" min="4" max="200" value="20"><input type="number" class="val-input" id="f_patSpacing_val" value="20"></div>
           <div class="row" id="patThicknessRow"><label>Grubość</label><input type="range" id="f_patThickness" min="1" max="12" value="1"><input type="number" class="val-input" id="f_patThickness_val" value="1"></div>
           <div class="row" id="patWaveAmpRow" style="display:none;"><label>Wysokość fali</label><input type="range" id="f_patWaveAmp" min="2" max="150" value="20"><input type="number" class="val-input" id="f_patWaveAmp_val" value="20"></div>
+          <div class="row" id="patWaveCurveRow" style="display:none;"><label>Wygięcie</label><input type="range" id="f_patWaveCurve" min="-150" max="150" value="0"><input type="number" class="val-input" id="f_patWaveCurve_val" value="0"></div>
           <div class="row" id="patWaveDirRow" style="display:none;">
             <label>Kierunek</label>
             <div class="btn-row">
@@ -15153,12 +15154,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else if (p.type === 'wave') {
       const amp = Math.max(2, p.waveAmp != null ? p.waveAmp : spacing * 0.25);
+      const curve = p.waveCurve || 0;
       const step = 6;
       if (p.waveDir === 'v') {
         for (let x = -amp; x < w + amp; x += spacing) {
           c.beginPath();
           for (let y = 0; y <= h; y += step) {
-            const xx = offsetX + x + Math.sin((y + x) / spacing * Math.PI) * amp;
+            const bow = curve * Math.sin(Math.PI * y / Math.max(1, h));
+            const xx = offsetX + x + Math.sin((y + x) / spacing * Math.PI) * amp + bow;
             if (y === 0) c.moveTo(xx, offsetY + y); else c.lineTo(xx, offsetY + y);
           }
           c.stroke();
@@ -15167,7 +15170,8 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let y = -amp; y < h + amp; y += spacing) {
           c.beginPath();
           for (let x = 0; x <= w; x += step) {
-            const yy = offsetY + y + Math.sin((x + y) / spacing * Math.PI) * amp;
+            const bow = curve * Math.sin(Math.PI * x / Math.max(1, w));
+            const yy = offsetY + y + Math.sin((x + y) / spacing * Math.PI) * amp + bow;
             if (x === 0) c.moveTo(offsetX + x, yy); else c.lineTo(offsetX + x, yy);
           }
           c.stroke();
@@ -15351,6 +15355,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.add('active');
       document.getElementById('patThicknessRow').style.setProperty('display', (a.pattern.patternType==='diagonal') ? 'none':'flex', 'important');
       document.getElementById('patWaveAmpRow').style.setProperty('display', (a.pattern.patternType==='wave') ? 'flex':'none', 'important');
+      document.getElementById('patWaveCurveRow').style.setProperty('display', (a.pattern.patternType==='wave') ? 'flex':'none', 'important');
       document.getElementById('patWaveDirRow').style.setProperty('display', (a.pattern.patternType==='wave') ? 'flex':'none', 'important');
       const canRandomize = (a.pattern.patternType==='dots'||a.pattern.patternType==='cross'||a.pattern.patternType==='denim'||a.pattern.patternType==='fabric');
       const randomMaskBtn = document.querySelector('[data-masktype="random"]');
@@ -15443,6 +15448,7 @@ document.addEventListener('DOMContentLoaded', () => {
   bindRange('f_patSpacing', v=>{ const a=getActive(); if(a) a.pattern.spacing=v; });
   bindRange('f_patThickness', v=>{ const a=getActive(); if(a) a.pattern.thickness=v; });
   bindRange('f_patWaveAmp', v=>{ const a=getActive(); if(a) a.pattern.waveAmp=v; });
+  bindRange('f_patWaveCurve', v=>{ const a=getActive(); if(a) a.pattern.waveCurve=v; });
   document.querySelectorAll('[data-wavedir]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const a=getActive(); if(!a || a.type!=='pattern') return;
@@ -16488,8 +16494,10 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('[data-ptype]').forEach(b=>b.classList.toggle('active', b.dataset.ptype===a.pattern.patternType));
       document.getElementById('patThicknessRow').style.setProperty('display', (a.pattern.patternType==='diagonal') ? 'none':'flex', 'important');
       document.getElementById('patWaveAmpRow').style.setProperty('display', (a.pattern.patternType==='wave') ? 'flex':'none', 'important');
+      document.getElementById('patWaveCurveRow').style.setProperty('display', (a.pattern.patternType==='wave') ? 'flex':'none', 'important');
       document.getElementById('patWaveDirRow').style.setProperty('display', (a.pattern.patternType==='wave') ? 'flex':'none', 'important');
       setRange('f_patWaveAmp', a.pattern.waveAmp != null ? a.pattern.waveAmp : Math.round(a.pattern.spacing*0.25));
+      setRange('f_patWaveCurve', a.pattern.waveCurve || 0);
       document.querySelectorAll('[data-wavedir]').forEach(b=>b.classList.toggle('active', b.dataset.wavedir===(a.pattern.waveDir||'h')));
       { const canRandomize = (a.pattern.patternType==='dots'||a.pattern.patternType==='cross'||a.pattern.patternType==='denim'||a.pattern.patternType==='fabric');
         const randomMaskBtn = document.querySelector('[data-masktype="random"]');
@@ -17418,7 +17426,7 @@ document.addEventListener('DOMContentLoaded', () => {
       c.beginPath();
       c.rect(pad, pad, layer.width, layer.height);
       c.clip();
-      drawPatternOverlay(c, {type:p.patternType, spacing:p.spacing, thickness:p.thickness, color:p.color, opacity:100, randomize:p.randomize, seed:p.seed, waveAmp:p.waveAmp, waveDir:p.waveDir}, layer.width, layer.height, pad, pad);
+      drawPatternOverlay(c, {type:p.patternType, spacing:p.spacing, thickness:p.thickness, color:p.color, opacity:100, randomize:p.randomize, seed:p.seed, waveAmp:p.waveAmp, waveDir:p.waveDir, waveCurve:p.waveCurve}, layer.width, layer.height, pad, pad);
       c.restore();
     }
 
