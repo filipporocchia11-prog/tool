@@ -3534,6 +3534,14 @@
           <div class="row"><label>Wysokość</label><input type="range" id="f_patHeight" min="10" max="2000" value="200"><input type="number" class="val-input" id="f_patHeight_val" value="200"></div>
           <div class="row"><label>Rozstaw</label><input type="range" id="f_patSpacing" min="4" max="200" value="20"><input type="number" class="val-input" id="f_patSpacing_val" value="20"></div>
           <div class="row" id="patThicknessRow"><label>Grubość</label><input type="range" id="f_patThickness" min="1" max="12" value="1"><input type="number" class="val-input" id="f_patThickness_val" value="1"></div>
+          <div class="row" id="patWaveAmpRow" style="display:none;"><label>Wysokość fali</label><input type="range" id="f_patWaveAmp" min="2" max="150" value="20"><input type="number" class="val-input" id="f_patWaveAmp_val" value="20"></div>
+          <div class="row" id="patWaveDirRow" style="display:none;">
+            <label>Kierunek</label>
+            <div class="btn-row">
+              <button data-wavedir="h" type="button" class="active">Poziomo</button>
+              <button data-wavedir="v" type="button">Pionowo</button>
+            </div>
+          </div>
           <div class="row"><label>Kolor</label><input type="color" id="f_patColor" value="#ffffff"></div>
         </div>
 
@@ -3555,15 +3563,17 @@
               <button data-masktype="corner-br" type="button">↘ Prawy dół</button>
               <button data-masktype="center" type="button">Środek</button>
               <button data-masktype="edges" type="button">Krawędzie</button>
+              <button data-masktype="random" type="button">🎲 Losowo</button>
             </div>
           </div>
-          <div class="row" id="patRandomizeRow" style="display:none;"><label>Losowe rozmieszczenie</label><label class="switch"><input type="checkbox" id="f_patRandomize"> gdzieniegdzie duże, gdzieniegdzie małe</label></div>
-          <div class="row" id="patSeedRow" style="display:none;"><label>Wariant</label><input type="range" id="f_patSeed" min="1" max="999" value="1" style="flex:1;"><button type="button" class="btn" id="patSeedReroll" style="margin-left:8px;">🎲</button></div>
           <div id="patMaskFields" style="display:none;">
-            <div class="row"><label>Zasięg X</label><input type="range" id="f_patMaskReachX" min="10" max="1500" value="150"><input type="number" class="val-input" id="f_patMaskReachX_val" value="150"></div>
-            <div class="row"><label>Zasięg Y</label><input type="range" id="f_patMaskReachY" min="10" max="1500" value="150"><input type="number" class="val-input" id="f_patMaskReachY_val" value="150"></div>
-            <div class="row"><button class="btn" id="fitMaskToBoxBtn" type="button" style="width:100%;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="12 3 12 21"/><path d="M19 18l-7-6 7-6v12z"/><path d="M5 18l7-6-7-6v12z"/></svg> Dopasuj do proporcji</button></div>
-            <div class="row"><label>Miękkość</label><input type="range" id="f_patMaskSoft" min="0" max="100" value="40"><input type="number" class="val-input" id="f_patMaskSoft_val" value="40"></div>
+            <div id="patCornerFields">
+              <div class="row"><label>Zasięg X</label><input type="range" id="f_patMaskReachX" min="10" max="1500" value="150"><input type="number" class="val-input" id="f_patMaskReachX_val" value="150"></div>
+              <div class="row"><label>Zasięg Y</label><input type="range" id="f_patMaskReachY" min="10" max="1500" value="150"><input type="number" class="val-input" id="f_patMaskReachY_val" value="150"></div>
+              <div class="row"><button class="btn" id="fitMaskToBoxBtn" type="button" style="width:100%;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="12 3 12 21"/><path d="M19 18l-7-6 7-6v12z"/><path d="M5 18l7-6-7-6v12z"/></svg> Dopasuj do proporcji</button></div>
+              <div class="row"><label>Miękkość</label><input type="range" id="f_patMaskSoft" min="0" max="100" value="40"><input type="number" class="val-input" id="f_patMaskSoft_val" value="40"></div>
+            </div>
+            <div class="row" id="patSeedRow" style="display:none;"><label>Wariant</label><input type="range" id="f_patSeed" min="1" max="999" value="1" style="flex:1;"><button type="button" class="btn" id="patSeedReroll" style="margin-left:8px;">🎲</button></div>
           </div>
         </div>
 
@@ -15142,15 +15152,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } else if (p.type === 'wave') {
-      const amp = Math.max(2, spacing * 0.25);
+      const amp = Math.max(2, p.waveAmp != null ? p.waveAmp : spacing * 0.25);
       const step = 6;
-      for (let y = -amp; y < h + amp; y += spacing) {
-        c.beginPath();
-        for (let x = 0; x <= w; x += step) {
-          const yy = offsetY + y + Math.sin((x + y) / spacing * Math.PI) * amp;
-          if (x === 0) c.moveTo(offsetX + x, yy); else c.lineTo(offsetX + x, yy);
+      if (p.waveDir === 'v') {
+        for (let x = -amp; x < w + amp; x += spacing) {
+          c.beginPath();
+          for (let y = 0; y <= h; y += step) {
+            const xx = offsetX + x + Math.sin((y + x) / spacing * Math.PI) * amp;
+            if (y === 0) c.moveTo(xx, offsetY + y); else c.lineTo(xx, offsetY + y);
+          }
+          c.stroke();
         }
-        c.stroke();
+      } else {
+        for (let y = -amp; y < h + amp; y += spacing) {
+          c.beginPath();
+          for (let x = 0; x <= w; x += step) {
+            const yy = offsetY + y + Math.sin((x + y) / spacing * Math.PI) * amp;
+            if (x === 0) c.moveTo(offsetX + x, yy); else c.lineTo(offsetX + x, yy);
+          }
+          c.stroke();
+        }
       }
     } else if (p.type === 'splatter') {
       const rnd = makeRng((p.seed||1) * 1000 + 1337);
@@ -15329,17 +15350,19 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('[data-ptype]').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('patThicknessRow').style.display = a.pattern.patternType==='diagonal' ? 'none':'flex';
+      document.getElementById('patWaveAmpRow').style.display = a.pattern.patternType==='wave' ? 'flex':'none';
+      document.getElementById('patWaveDirRow').style.display = a.pattern.patternType==='wave' ? 'flex':'none';
       const canRandomize = (a.pattern.patternType==='dots'||a.pattern.patternType==='cross'||a.pattern.patternType==='denim'||a.pattern.patternType==='fabric');
-      document.getElementById('patRandomizeRow').style.display = canRandomize ? 'flex':'none';
-      document.getElementById('patSeedRow').style.display = (canRandomize && a.pattern.randomize) ? 'flex':'none';
+      const randomMaskBtn = document.querySelector('[data-masktype="random"]');
+      if(randomMaskBtn) randomMaskBtn.style.display = canRandomize ? '':'none';
+      if(!canRandomize && a.pattern.mask && a.pattern.mask.type==='random'){
+        a.pattern.mask.type = 'none';
+        a.pattern.randomize = false;
+        document.querySelectorAll('[data-masktype]').forEach(b=>b.classList.toggle('active', b.dataset.masktype==='none'));
+        document.getElementById('patMaskFields').style.display = 'none';
+      }
       render();
     });
-  });
-  document.getElementById('f_patRandomize').addEventListener('change', e=>{
-    const a=getActive(); if(!a || a.type!=='pattern') return;
-    a.pattern.randomize = e.target.checked;
-    document.getElementById('patSeedRow').style.display = e.target.checked ? 'flex':'none';
-    render();
   });
   document.getElementById('f_patSeed').addEventListener('input', e=>{
     const a=getActive(); if(!a || a.type!=='pattern') return;
@@ -15419,6 +15442,16 @@ document.addEventListener('DOMContentLoaded', () => {
   bindRange('f_patHeight', v=>{ const a=getActive(); if(a) a.height=v; });
   bindRange('f_patSpacing', v=>{ const a=getActive(); if(a) a.pattern.spacing=v; });
   bindRange('f_patThickness', v=>{ const a=getActive(); if(a) a.pattern.thickness=v; });
+  bindRange('f_patWaveAmp', v=>{ const a=getActive(); if(a) a.pattern.waveAmp=v; });
+  document.querySelectorAll('[data-wavedir]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const a=getActive(); if(!a || a.type!=='pattern') return;
+      a.pattern.waveDir = btn.dataset.wavedir;
+      document.querySelectorAll('[data-wavedir]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    });
+  });
   document.getElementById('f_patColor').addEventListener('input', e=>{
     const a=getActive(); if(a){ a.pattern.color=e.target.value; render(); }
   });
@@ -15432,9 +15465,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const a=getActive(); if(!a || a.type!=='pattern') return;
       if(!a.pattern.mask) a.pattern.mask = {type:'none', reachX:150, reachY:150, softness:40};
       a.pattern.mask.type = btn.dataset.masktype;
+      a.pattern.randomize = (btn.dataset.masktype === 'random');
       document.querySelectorAll('[data-masktype]').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('patMaskFields').style.display = a.pattern.mask.type==='none' ? 'none':'block';
+      document.getElementById('patCornerFields').style.display = a.pattern.mask.type==='random' ? 'none':'block';
+      document.getElementById('patSeedRow').style.display = a.pattern.mask.type==='random' ? 'flex':'none';
       render();
       pushHistory();
     });
@@ -16451,11 +16487,14 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('f_patColor').value = a.pattern.color;
       document.querySelectorAll('[data-ptype]').forEach(b=>b.classList.toggle('active', b.dataset.ptype===a.pattern.patternType));
       document.getElementById('patThicknessRow').style.display = a.pattern.patternType==='diagonal' ? 'none':'flex';
+      document.getElementById('patWaveAmpRow').style.display = a.pattern.patternType==='wave' ? 'flex':'none';
+      document.getElementById('patWaveDirRow').style.display = a.pattern.patternType==='wave' ? 'flex':'none';
+      setRange('f_patWaveAmp', a.pattern.waveAmp != null ? a.pattern.waveAmp : Math.round(a.pattern.spacing*0.25));
+      document.querySelectorAll('[data-wavedir]').forEach(b=>b.classList.toggle('active', b.dataset.wavedir===(a.pattern.waveDir||'h')));
       { const canRandomize = (a.pattern.patternType==='dots'||a.pattern.patternType==='cross'||a.pattern.patternType==='denim'||a.pattern.patternType==='fabric');
-        document.getElementById('patRandomizeRow').style.display = canRandomize ? 'flex':'none';
-        document.getElementById('patSeedRow').style.display = (canRandomize && a.pattern.randomize) ? 'flex':'none';
+        const randomMaskBtn = document.querySelector('[data-masktype="random"]');
+        if(randomMaskBtn) randomMaskBtn.style.display = canRandomize ? '':'none';
         document.getElementById('f_patSeed').value = a.pattern.seed || 1; }
-      document.getElementById('f_patRandomize').checked = !!a.pattern.randomize;
       setRange('f_patOpacity', a.opacity);
 
       if(!a.pattern.mask) a.pattern.mask = {type:'none', reachX:150, reachY:150, softness:40};
@@ -16465,6 +16504,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       document.querySelectorAll('[data-masktype]').forEach(b=>b.classList.toggle('active', b.dataset.masktype===a.pattern.mask.type));
       document.getElementById('patMaskFields').style.display = a.pattern.mask.type==='none' ? 'none':'block';
+      document.getElementById('patCornerFields').style.display = a.pattern.mask.type==='random' ? 'none':'block';
+      document.getElementById('patSeedRow').style.display = a.pattern.mask.type==='random' ? 'flex':'none';
       setRange('f_patMaskReachX', a.pattern.mask.reachX);
       setRange('f_patMaskReachY', a.pattern.mask.reachY);
       setRange('f_patMaskSoft', a.pattern.mask.softness!=null?a.pattern.mask.softness:40);
@@ -17377,7 +17418,7 @@ document.addEventListener('DOMContentLoaded', () => {
       c.beginPath();
       c.rect(pad, pad, layer.width, layer.height);
       c.clip();
-      drawPatternOverlay(c, {type:p.patternType, spacing:p.spacing, thickness:p.thickness, color:p.color, opacity:100, randomize:p.randomize, seed:p.seed}, layer.width, layer.height, pad, pad);
+      drawPatternOverlay(c, {type:p.patternType, spacing:p.spacing, thickness:p.thickness, color:p.color, opacity:100, randomize:p.randomize, seed:p.seed, waveAmp:p.waveAmp, waveDir:p.waveDir}, layer.width, layer.height, pad, pad);
       c.restore();
     }
 
@@ -17405,7 +17446,7 @@ document.addEventListener('DOMContentLoaded', () => {
     paintOnce();
     c.restore();
 
-    if(p.mask && p.mask.type && p.mask.type!=='none'){
+    if(p.mask && p.mask.type && p.mask.type!=='none' && p.mask.type!=='random'){
       const maskCanvas = buildPatternVisibilityMask(w, h, pad, layer.width, layer.height, p.mask);
       c.save();
       c.globalCompositeOperation = 'destination-in';
