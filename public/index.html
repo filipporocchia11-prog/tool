@@ -15018,6 +15018,41 @@ document.addEventListener('DOMContentLoaded', () => {
     c.fill();
   }
 
+  // Rysuje kilka dużych, gładkich plam o rozmytej krawędzi, wypełnionych ostrą teksturą w środku
+  // (jak plamy oleju/kałuże z wyraźnym wzorem wewnątrz, ale miękko wtopione w tło na brzegach).
+  function renderOrganicTexturePatches(c, w, h, offsetX, offsetY, rnd, drawTextureFn, opts) {
+    opts = opts || {};
+    const cw = Math.max(1, Math.round(w));
+    const ch = Math.max(1, Math.round(h));
+    const blobCount = opts.blobCount || (5 + Math.floor(rnd() * 4));
+    const blur = opts.blur != null ? opts.blur : Math.max(10, Math.min(cw, ch) * 0.05);
+
+    const maskCv = document.createElement('canvas');
+    maskCv.width = cw; maskCv.height = ch;
+    const mctx = maskCv.getContext('2d');
+    mctx.fillStyle = '#fff';
+    mctx.filter = `blur(${blur}px)`;
+    for (let i = 0; i < blobCount; i++) {
+      const bx = rnd() * cw, by = rnd() * ch;
+      const br = Math.min(cw, ch) * (0.22 + rnd() * 0.3);
+      mctx.beginPath();
+      buildBlobPath(mctx, bx, by, br, rnd);
+      mctx.fill();
+    }
+    mctx.filter = 'none';
+
+    const texCv = document.createElement('canvas');
+    texCv.width = cw; texCv.height = ch;
+    const tctx = texCv.getContext('2d');
+    drawTextureFn(tctx, cw, ch);
+
+    mctx.globalCompositeOperation = 'source-in';
+    mctx.drawImage(texCv, 0, 0);
+    mctx.globalCompositeOperation = 'source-over';
+
+    c.drawImage(maskCv, offsetX, offsetY);
+  }
+
   function drawPatternOverlay(c, p, w, h, offsetX, offsetY) {
     if (!p || p.type === 'none') return;
     offsetX = offsetX || 0;
@@ -15032,38 +15067,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (p.type === 'fabric' || p.type === 'denim' || p.type === 'grain') {
       if (p.randomize && (p.type === 'fabric' || p.type === 'denim')) {
         const rnd = makeRng((p.seed||1) * 1000 + 555);
-        const cell = Math.max(6, spacing);
         const tileScale = Math.max(4, Math.round(spacing / 4));
         const tile = createFabricTile(p.color, tileScale, p.type);
-        const pat = c.createPattern(tile, 'repeat');
-        if (pat) c.fillStyle = pat;
-        // warstwa 1: drobna, gęsta faktura tła (subtelna)
-        const fineCell = cell * 0.45;
-        for (let x = -fineCell; x < w + fineCell; x += fineCell) {
-          for (let y = -fineCell; y < h + fineCell; y += fineCell) {
-            if (rnd() < 0.55) continue;
-            const jx = offsetX + x + rnd() * fineCell;
-            const jy = offsetY + y + rnd() * fineCell;
-            const s = fineCell * (0.6 + rnd() * 0.9);
-            c.save();
-            c.globalAlpha *= 0.35 + rnd() * 0.35;
-            drawPuddleBlob(c, jx, jy, s * 0.5, rnd);
-            c.restore();
-          }
-        }
-        // warstwa 2: rzadkie, większe akcenty
-        for (let x = -cell; x < w + cell; x += cell) {
-          for (let y = -cell; y < h + cell; y += cell) {
-            if (rnd() < 0.55) continue;
-            const jx = offsetX + x + rnd() * cell;
-            const jy = offsetY + y + rnd() * cell;
-            const s = cell * (0.6 + rnd() * 1.3);
-            c.save();
-            c.globalAlpha *= 0.5 + rnd() * 0.5;
-            drawPuddleBlob(c, jx, jy, s * 0.5, rnd);
-            c.restore();
-          }
-        }
+        renderOrganicTexturePatches(c, w, h, offsetX, offsetY, rnd, (tctx, tw, th) => {
+          const pat = tctx.createPattern(tile, 'repeat');
+          if (pat) { tctx.fillStyle = pat; tctx.fillRect(0, 0, tw, th); }
+        });
       } else {
         const tileScale = Math.max(4, Math.round(spacing / 4));
         const tile = createFabricTile(p.color, tileScale, p.type);
@@ -15082,15 +15091,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const r = Math.max(0.5, (p.thickness || 1) * 0.9);
       if (p.randomize) {
         const rnd = makeRng((p.seed||1) * 1000 + 777);
-        for (let x = spacing / 2; x < w; x += spacing) {
-          for (let y = spacing / 2; y < h; y += spacing) {
-            if (rnd() < 0.3) continue;
-            const jx = (rnd() - 0.5) * spacing * 0.8;
-            const jy = (rnd() - 0.5) * spacing * 0.8;
-            const rr = r * (0.4 + rnd() * 2.2);
-            drawPuddleBlob(c, offsetX + x + jx, offsetY + y + jy, rr, rnd);
+        renderOrganicTexturePatches(c, w, h, offsetX, offsetY, rnd, (tctx, tw, th) => {
+          tctx.fillStyle = p.color;
+          for (let x = spacing / 2; x < tw; x += spacing) {
+            for (let y = spacing / 2; y < th; y += spacing) {
+              tctx.beginPath(); tctx.arc(x, y, r, 0, Math.PI * 2); tctx.fill();
+            }
           }
-        }
+        });
       } else {
         for (let x = spacing / 2; x < w; x += spacing) {
           for (let y = spacing / 2; y < h; y += spacing) {
@@ -15110,20 +15118,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const arm = Math.max(3, spacing * 0.15);
       if (p.randomize) {
         const rnd = makeRng((p.seed||1) * 1000 + 999);
-        for (let x = spacing / 2; x < w; x += spacing) {
-          for (let y = spacing / 2; y < h; y += spacing) {
-            if (rnd() < 0.3) continue;
-            const jx = (rnd() - 0.5) * spacing * 0.8;
-            const jy = (rnd() - 0.5) * spacing * 0.8;
-            const armR = arm * (0.4 + rnd() * 2.2);
-            const cx = offsetX + x + jx, cy = offsetY + y + jy;
-            c.beginPath();
-            c.moveTo(cx - armR, cy); c.lineTo(cx + armR, cy);
-            c.moveTo(cx, cy - armR); c.lineTo(cx, cy + armR);
-            c.lineWidth = s;
-            c.stroke();
+        renderOrganicTexturePatches(c, w, h, offsetX, offsetY, rnd, (tctx, tw, th) => {
+          tctx.strokeStyle = p.color;
+          tctx.lineWidth = s;
+          for (let x = spacing / 2; x < tw; x += spacing) {
+            for (let y = spacing / 2; y < th; y += spacing) {
+              tctx.beginPath();
+              tctx.moveTo(x - arm, y); tctx.lineTo(x + arm, y);
+              tctx.moveTo(x, y - arm); tctx.lineTo(x, y + arm);
+              tctx.stroke();
+            }
           }
-        }
+        });
       } else {
         for (let x = spacing / 2; x < w; x += spacing) {
           for (let y = spacing / 2; y < h; y += spacing) {
