@@ -14920,8 +14920,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('patternMode').addEventListener('change', e=>{
     pattern.type = e.target.value;
-    document.getElementById('patternPanel').style.display = pattern.type==='none' ? 'none':'block';
-    document.getElementById('patternThicknessRow').style.display = pattern.type==='diagonal' ? 'none':'flex';
+    document.getElementById('patternPanel').style.setProperty('display', (pattern.type==='none') ? 'none':'block', 'important');
+    document.getElementById('patternThicknessRow').style.setProperty('display', (pattern.type==='diagonal') ? 'none':'flex', 'important');
     render();
   });
   function bindPatternRange(id, cb){
@@ -15211,9 +15211,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.getElementById('bgMode').addEventListener('change', e=>{
     bgMode = e.target.value;
-    document.getElementById('bgColor').style.display = bgMode==='color' ? 'inline-block':'none';
-    document.getElementById('bgImageFile').style.display = bgMode==='image' ? 'inline-block':'none';
-    document.getElementById('bgGradientPanel').style.display = bgMode==='gradient' ? 'block':'none';
+    document.getElementById('bgColor').style.setProperty('display', (bgMode==='color') ? 'inline-block':'none', 'important');
+    document.getElementById('bgImageFile').style.setProperty('display', (bgMode==='image') ? 'inline-block':'none', 'important');
+    document.getElementById('bgGradientPanel').style.setProperty('display', (bgMode==='gradient') ? 'block':'none', 'important');
     if(bgMode==='gradient') bgGradEditor.reset();
     render();
   });
@@ -15235,11 +15235,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
   function updateBgGradientRowsVisibility(type){
-    document.getElementById('bgGradAngleRow').style.display = (type==='linear'||type==='conic') ? 'flex':'none';
+    document.getElementById('bgGradAngleRow').style.setProperty('display', ((type==='linear'||type==='conic')) ? 'flex':'none', 'important');
     document.getElementById('bgGradAngleLabel').textContent = type==='conic' ? 'Kąt startu' : 'Kąt';
-    document.getElementById('bgGradCenterXRow').style.display = (type==='radial'||type==='conic') ? 'flex':'none';
-    document.getElementById('bgGradCenterYRow').style.display = (type==='radial'||type==='conic') ? 'flex':'none';
-    document.getElementById('bgGradRadiusRow').style.display = (type==='radial') ? 'flex':'none';
+    document.getElementById('bgGradCenterXRow').style.setProperty('display', ((type==='radial'||type==='conic')) ? 'flex':'none', 'important');
+    document.getElementById('bgGradCenterYRow').style.setProperty('display', ((type==='radial'||type==='conic')) ? 'flex':'none', 'important');
+    document.getElementById('bgGradRadiusRow').style.setProperty('display', ((type==='radial')) ? 'flex':'none', 'important');
   }
   function bindBgRange(id, cb, suffix){
     const el = document.getElementById(id);
@@ -15291,7 +15291,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const a=getActive(); if(!a) return;
     if(!a.tint) a.tint = {on:false, color:'#808080', opacity:40, mode:'normal'};
     a.tint.on = e.target.checked;
-    document.getElementById('tintFields').style.display = a.tint.on ? 'block':'none';
+    document.getElementById('tintFields').style.setProperty('display', (a.tint.on) ? 'block':'none', 'important');
     render();
   });
   document.getElementById('f_tintColor').addEventListener('input', e=>{
@@ -15349,9 +15349,9 @@ document.addEventListener('DOMContentLoaded', () => {
       a.pattern.patternType = btn.dataset.ptype;
       document.querySelectorAll('[data-ptype]').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
-      document.getElementById('patThicknessRow').style.display = a.pattern.patternType==='diagonal' ? 'none':'flex';
-      document.getElementById('patWaveAmpRow').style.display = a.pattern.patternType==='wave' ? 'flex':'none';
-      document.getElementById('patWaveDirRow').style.display = a.pattern.patternType==='wave' ? 'flex':'none';
+      document.getElementById('patThicknessRow').style.setProperty('display', (a.pattern.patternType==='diagonal') ? 'none':'flex', 'important');
+      document.getElementById('patWaveAmpRow').style.setProperty('display', (a.pattern.patternType==='wave') ? 'flex':'none', 'important');
+      document.getElementById('patWaveDirRow').style.setProperty('display', (a.pattern.patternType==='wave') ? 'flex':'none', 'important');
       const canRandomize = (a.pattern.patternType==='dots'||a.pattern.patternType==='cross'||a.pattern.patternType==='denim'||a.pattern.patternType==='fabric');
       const randomMaskBtn = document.querySelector('[data-masktype="random"]');
       if(randomMaskBtn) randomMaskBtn.style.display = canRandomize ? '':'none';
@@ -15468,9 +15468,9 @@ document.addEventListener('DOMContentLoaded', () => {
       a.pattern.randomize = (btn.dataset.masktype === 'random');
       document.querySelectorAll('[data-masktype]').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
-      document.getElementById('patMaskFields').style.display = a.pattern.mask.type==='none' ? 'none':'block';
-      document.getElementById('patCornerFields').style.display = a.pattern.mask.type==='random' ? 'none':'block';
-      document.getElementById('patSeedRow').style.display = a.pattern.mask.type==='random' ? 'flex':'none';
+      document.getElementById('patMaskFields').style.setProperty('display', (a.pattern.mask.type==='none') ? 'none':'block', 'important');
+      document.getElementById('patCornerFields').style.setProperty('display', (a.pattern.mask.type==='random') ? 'none':'block', 'important');
+      document.getElementById('patSeedRow').style.setProperty('display', (a.pattern.mask.type==='random') ? 'flex':'none', 'important');
       render();
       pushHistory();
     });
@@ -15808,7 +15808,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const a=getActive(); if(!a) return;
     if(!a.anim.letterStagger) a.anim.letterStagger = {on:false, direction:'left', delay:0, staggerDelay:0.08, duration:0.5, distance:40};
     a.anim.letterStagger.on = e.target.checked;
-    document.getElementById('letterFields').style.display = a.anim.letterStagger.on ? 'block':'none';
+    document.getElementById('letterFields').style.setProperty('display', (a.anim.letterStagger.on) ? 'block':'none', 'important');
     render();
   });
   document.querySelectorAll('[data-letterdir]').forEach(btn=>{
@@ -15863,8 +15863,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const a=getActive(); if(!a) return; a.fillType = btn.dataset.fill;
       document.querySelectorAll('[data-fill]').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
-      document.getElementById('fillSolidRow').style.display = a.fillType==='solid' ? 'flex':'none';
-      document.getElementById('fillGradRow').style.display = a.fillType==='gradient' ? 'block':'none';
+      document.getElementById('fillSolidRow').style.setProperty('display', (a.fillType==='solid') ? 'flex':'none', 'important');
+      document.getElementById('fillGradRow').style.setProperty('display', (a.fillType==='gradient') ? 'block':'none', 'important');
       render();
     });
   });
@@ -15882,11 +15882,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
   function updateGradientRowsVisibility(type){
-    document.getElementById('gradAngleRow').style.display = (type==='linear'||type==='conic') ? 'flex':'none';
+    document.getElementById('gradAngleRow').style.setProperty('display', ((type==='linear'||type==='conic')) ? 'flex':'none', 'important');
     document.getElementById('gradAngleLabel').textContent = type==='conic' ? 'Kąt startu' : 'Kąt';
-    document.getElementById('gradCenterXRow').style.display = (type==='radial'||type==='conic') ? 'flex':'none';
-    document.getElementById('gradCenterYRow').style.display = (type==='radial'||type==='conic') ? 'flex':'none';
-    document.getElementById('gradRadiusRow').style.display = (type==='radial') ? 'flex':'none';
+    document.getElementById('gradCenterXRow').style.setProperty('display', ((type==='radial'||type==='conic')) ? 'flex':'none', 'important');
+    document.getElementById('gradCenterYRow').style.setProperty('display', ((type==='radial'||type==='conic')) ? 'flex':'none', 'important');
+    document.getElementById('gradRadiusRow').style.setProperty('display', ((type==='radial')) ? 'flex':'none', 'important');
   }
   bindRange('f_gradAngle', v=>{ const a=getActive(); if(a) a.gradient.angle=v; }, '°');
   bindRange('f_gradCX', v=>{ const a=getActive(); if(a) a.gradient.cx=v; });
@@ -16266,7 +16266,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('f_glowOn').addEventListener('change', e=>{
     const a=getActive(); if(!a) return; a.glow.on = e.target.checked;
-    document.getElementById('glowFields').style.display = a.glow.on ? 'block':'none';
+    document.getElementById('glowFields').style.setProperty('display', (a.glow.on) ? 'block':'none', 'important');
     render();
   });
   document.getElementById('f_glowColor').addEventListener('input', e=>{ const a=getActive(); if(a){a.glow.color=e.target.value; render();} });
@@ -16277,7 +16277,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('f_shadowOn').addEventListener('change', e=>{
     const a=getActive(); if(!a) return; a.shadow.on = e.target.checked;
-    document.getElementById('shadowFields').style.display = a.shadow.on ? 'block':'none';
+    document.getElementById('shadowFields').style.setProperty('display', (a.shadow.on) ? 'block':'none', 'important');
     render();
   });
   document.getElementById('f_shadowColor').addEventListener('input', e=>{ const a=getActive(); if(a){a.shadow.color=e.target.value; render();} });
@@ -16289,7 +16289,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('f_blurOn').addEventListener('change', e=>{
     const a=getActive(); if(!a) return; a.blur.on = e.target.checked;
-    document.getElementById('blurFields').style.display = a.blur.on ? 'block':'none';
+    document.getElementById('blurFields').style.setProperty('display', (a.blur.on) ? 'block':'none', 'important');
     render();
   });
   bindRange('f_blurAmt', v=>{ const a=getActive(); if(a) a.blur.amount=v; });
@@ -16447,7 +16447,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setRange('f_imgScale', a.scale);
       if(!a.tint) a.tint = {on:false, color:'#808080', opacity:40, mode:'normal'};
       document.getElementById('f_tintOn').checked = a.tint.on;
-      document.getElementById('tintFields').style.display = a.tint.on ? 'block':'none';
+      document.getElementById('tintFields').style.setProperty('display', (a.tint.on) ? 'block':'none', 'important');
       document.getElementById('f_tintColor').value = a.tint.color;
       setRange('f_tintOpacity', a.tint.opacity);
       document.querySelectorAll('[data-tintmode]').forEach(b=>b.classList.toggle('active', b.dataset.tintmode===a.tint.mode));
@@ -16475,8 +16475,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('f_shapeFillOn').checked = a.shape.fill;
         document.getElementById('f_shapeFillColor').value = a.shape.fillColor;
         const noHeight = (a.shapeType==='line' || a.shapeType==='arrow');
-        document.getElementById('shapeHeightRow').style.display = noHeight ? 'none':'flex';
-        document.getElementById('shapeFillRow').style.display = noHeight ? 'none':'flex';
+        document.getElementById('shapeHeightRow').style.setProperty('display', (noHeight) ? 'none':'flex', 'important');
+        document.getElementById('shapeFillRow').style.setProperty('display', (noHeight) ? 'none':'flex', 'important');
       }
     }
     if(isPattern){
@@ -16486,9 +16486,9 @@ document.addEventListener('DOMContentLoaded', () => {
       setRange('f_patThickness', a.pattern.thickness);
       document.getElementById('f_patColor').value = a.pattern.color;
       document.querySelectorAll('[data-ptype]').forEach(b=>b.classList.toggle('active', b.dataset.ptype===a.pattern.patternType));
-      document.getElementById('patThicknessRow').style.display = a.pattern.patternType==='diagonal' ? 'none':'flex';
-      document.getElementById('patWaveAmpRow').style.display = a.pattern.patternType==='wave' ? 'flex':'none';
-      document.getElementById('patWaveDirRow').style.display = a.pattern.patternType==='wave' ? 'flex':'none';
+      document.getElementById('patThicknessRow').style.setProperty('display', (a.pattern.patternType==='diagonal') ? 'none':'flex', 'important');
+      document.getElementById('patWaveAmpRow').style.setProperty('display', (a.pattern.patternType==='wave') ? 'flex':'none', 'important');
+      document.getElementById('patWaveDirRow').style.setProperty('display', (a.pattern.patternType==='wave') ? 'flex':'none', 'important');
       setRange('f_patWaveAmp', a.pattern.waveAmp != null ? a.pattern.waveAmp : Math.round(a.pattern.spacing*0.25));
       document.querySelectorAll('[data-wavedir]').forEach(b=>b.classList.toggle('active', b.dataset.wavedir===(a.pattern.waveDir||'h')));
       { const canRandomize = (a.pattern.patternType==='dots'||a.pattern.patternType==='cross'||a.pattern.patternType==='denim'||a.pattern.patternType==='fabric');
@@ -16503,9 +16503,9 @@ document.addEventListener('DOMContentLoaded', () => {
         a.pattern.mask.reachY = a.pattern.mask.reach!=null ? a.pattern.mask.reach : 150;
       }
       document.querySelectorAll('[data-masktype]').forEach(b=>b.classList.toggle('active', b.dataset.masktype===a.pattern.mask.type));
-      document.getElementById('patMaskFields').style.display = a.pattern.mask.type==='none' ? 'none':'block';
-      document.getElementById('patCornerFields').style.display = a.pattern.mask.type==='random' ? 'none':'block';
-      document.getElementById('patSeedRow').style.display = a.pattern.mask.type==='random' ? 'flex':'none';
+      document.getElementById('patMaskFields').style.setProperty('display', (a.pattern.mask.type==='none') ? 'none':'block', 'important');
+      document.getElementById('patCornerFields').style.setProperty('display', (a.pattern.mask.type==='random') ? 'none':'block', 'important');
+      document.getElementById('patSeedRow').style.setProperty('display', (a.pattern.mask.type==='random') ? 'flex':'none', 'important');
       setRange('f_patMaskReachX', a.pattern.mask.reachX);
       setRange('f_patMaskReachY', a.pattern.mask.reachY);
       setRange('f_patMaskSoft', a.pattern.mask.softness!=null?a.pattern.mask.softness:40);
@@ -16542,8 +16542,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setRange('f_warpAmount', a.warp.amount != null ? a.warp.amount : 30);
 
     document.querySelectorAll('[data-fill]').forEach(b=>b.classList.toggle('active', b.dataset.fill===a.fillType));
-    document.getElementById('fillSolidRow').style.display = a.fillType==='solid' ? 'flex':'none';
-    document.getElementById('fillGradRow').style.display = a.fillType==='gradient' ? 'block':'none';
+    document.getElementById('fillSolidRow').style.setProperty('display', (a.fillType==='solid') ? 'flex':'none', 'important');
+    document.getElementById('fillGradRow').style.setProperty('display', (a.fillType==='gradient') ? 'block':'none', 'important');
     document.getElementById('f_color').value = a.color;
     document.querySelectorAll('[data-gtype]').forEach(b=>b.classList.toggle('active', b.dataset.gtype===a.gradient.type));
     updateGradientRowsVisibility(a.gradient.type);
@@ -16562,7 +16562,7 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshOutlineList();
 
     document.getElementById('f_glowOn').checked = a.glow.on;
-    document.getElementById('glowFields').style.display = a.glow.on ? 'block':'none';
+    document.getElementById('glowFields').style.setProperty('display', (a.glow.on) ? 'block':'none', 'important');
     document.getElementById('f_glowColor').value = a.glow.color;
     setRange('f_glowBlur', a.glow.blur);
     setRange('f_glowStrength', a.glow.strength);
@@ -16570,7 +16570,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('f_glowBlendMode').value = a.glow.blendMode || 'source-over';
 
     document.getElementById('f_shadowOn').checked = a.shadow.on;
-    document.getElementById('shadowFields').style.display = a.shadow.on ? 'block':'none';
+    document.getElementById('shadowFields').style.setProperty('display', (a.shadow.on) ? 'block':'none', 'important');
     document.getElementById('f_shadowColor').value = a.shadow.color;
     setRange('f_shadowBlur', a.shadow.blur);
     setRange('f_shadowX', a.shadow.x);
@@ -16579,7 +16579,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('f_shadowBlendMode').value = a.shadow.blendMode || 'source-over';
 
     document.getElementById('f_blurOn').checked = a.blur.on;
-    document.getElementById('blurFields').style.display = a.blur.on ? 'block':'none';
+    document.getElementById('blurFields').style.setProperty('display', (a.blur.on) ? 'block':'none', 'important');
     setRange('f_blurAmt', a.blur.amount);
 
     setRange('f_opacity', a.opacity);
@@ -16638,7 +16638,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const ls = a.anim.letterStagger;
     document.getElementById('f_letterOn').checked = ls.on;
-    document.getElementById('letterFields').style.display = ls.on ? 'block':'none';
+    document.getElementById('letterFields').style.setProperty('display', (ls.on) ? 'block':'none', 'important');
     document.querySelectorAll('[data-letterdir]').forEach(b=>b.classList.toggle('active', b.dataset.letterdir===ls.direction));
     setRange('f_letterDelay', ls.delay||0, 's');
     setRange('f_letterStagger', ls.staggerDelay!=null?ls.staggerDelay:0.08, 's');
@@ -19207,9 +19207,9 @@ document.addEventListener('DOMContentLoaded', () => {
     bgGradient = bg.gradient || bgGradient;
     document.getElementById('bgMode').value = bgMode;
     document.getElementById('bgColor').value = bgColor;
-    document.getElementById('bgColor').style.display = bgMode==='color' ? 'inline-block':'none';
-    document.getElementById('bgImageFile').style.display = bgMode==='image' ? 'inline-block':'none';
-    document.getElementById('bgGradientPanel').style.display = bgMode==='gradient' ? 'block':'none';
+    document.getElementById('bgColor').style.setProperty('display', (bgMode==='color') ? 'inline-block':'none', 'important');
+    document.getElementById('bgImageFile').style.setProperty('display', (bgMode==='image') ? 'inline-block':'none', 'important');
+    document.getElementById('bgGradientPanel').style.setProperty('display', (bgMode==='gradient') ? 'block':'none', 'important');
     document.querySelectorAll('[data-bgtype]').forEach(b=>b.classList.toggle('active', b.dataset.bgtype===bgGradient.type));
     updateBgGradientRowsVisibility(bgGradient.type);
     setRange('f_bgGradAngle', bgGradient.angle, '°');
@@ -19228,8 +19228,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     pattern = project.pattern || { type:'none', spacing:40, thickness:1, color:'#ffffff', opacity:15 };
     document.getElementById('patternMode').value = pattern.type;
-    document.getElementById('patternPanel').style.display = pattern.type==='none' ? 'none':'block';
-    document.getElementById('patternThicknessRow').style.display = pattern.type==='diagonal' ? 'none':'flex';
+    document.getElementById('patternPanel').style.setProperty('display', (pattern.type==='none') ? 'none':'block', 'important');
+    document.getElementById('patternThicknessRow').style.setProperty('display', (pattern.type==='diagonal') ? 'none':'flex', 'important');
     setRange('f_patternSpacing', pattern.spacing);
     setRange('f_patternThickness', pattern.thickness);
     setRange('f_patternOpacity', pattern.opacity);
