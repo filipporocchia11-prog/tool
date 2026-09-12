@@ -3543,6 +3543,23 @@
               <button data-wavedir="v" type="button">Pionowo</button>
             </div>
           </div>
+          <div class="row" id="patDotShapeRow" style="display:none;">
+            <label>Kształt</label>
+            <div class="btn-row">
+              <button data-dotshape="circle" type="button" class="active">Koło</button>
+              <button data-dotshape="square" type="button">Kwadrat</button>
+              <button data-dotshape="triangle" type="button">Trójkąt</button>
+              <button data-dotshape="star" type="button">Gwiazda</button>
+              <button data-dotshape="heart" type="button">Serce</button>
+            </div>
+          </div>
+          <div class="row" id="patDotLayoutRow" style="display:none;">
+            <label>Rozmieszczenie</label>
+            <div class="btn-row">
+              <button data-dotlayout="grid" type="button" class="active">Siatka</button>
+              <button data-dotlayout="brick" type="button">Naprzemiennie</button>
+            </div>
+          </div>
           <div class="row"><label>Kolor</label><input type="color" id="f_patColor" value="#ffffff"></div>
         </div>
 
@@ -3564,6 +3581,10 @@
               <button data-masktype="corner-br" type="button">↘ Prawy dół</button>
               <button data-masktype="center" type="button">Środek</button>
               <button data-masktype="edges" type="button">Krawędzie</button>
+              <button data-masktype="side-left" type="button">◀ Lewa strona</button>
+              <button data-masktype="side-right" type="button">Prawa strona ▶</button>
+              <button data-masktype="side-top" type="button">▲ Góra</button>
+              <button data-masktype="side-bottom" type="button">▼ Dół</button>
               <button data-masktype="random" type="button">🎲 Losowo</button>
             </div>
           </div>
@@ -15064,6 +15085,59 @@ document.addEventListener('DOMContentLoaded', () => {
     c.drawImage(maskCv, offsetX, offsetY);
   }
 
+  function drawDotShape(c, shape, cx, cy, r) {
+    switch (shape) {
+      case 'square':
+        c.fillRect(cx - r, cy - r, r * 2, r * 2);
+        break;
+      case 'triangle':
+        c.beginPath();
+        c.moveTo(cx, cy - r);
+        c.lineTo(cx + r * 0.87, cy + r * 0.5);
+        c.lineTo(cx - r * 0.87, cy + r * 0.5);
+        c.closePath();
+        c.fill();
+        break;
+      case 'star': {
+        const outerR = r, innerR = r * 0.45, pts = 5;
+        c.beginPath();
+        for (let i = 0; i < pts * 2; i++) {
+          const rr = i % 2 === 0 ? outerR : innerR;
+          const a = (Math.PI / pts) * i - Math.PI / 2;
+          const x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr;
+          if (i === 0) c.moveTo(x, y); else c.lineTo(x, y);
+        }
+        c.closePath();
+        c.fill();
+        break;
+      }
+      case 'heart': {
+        const s = r;
+        c.beginPath();
+        c.moveTo(cx, cy + s * 0.35);
+        c.bezierCurveTo(cx, cy, cx - s, cy, cx - s, cy + s * 0.35);
+        c.bezierCurveTo(cx - s, cy + s * 0.7, cx, cy + s, cx, cy + s * 1.3);
+        c.bezierCurveTo(cx, cy + s, cx + s, cy + s * 0.7, cx + s, cy + s * 0.35);
+        c.bezierCurveTo(cx + s, cy, cx, cy, cx, cy + s * 0.35);
+        c.closePath();
+        c.fill();
+        break;
+      }
+      default:
+        c.beginPath(); c.arc(cx, cy, r, 0, Math.PI * 2); c.fill();
+    }
+  }
+
+  function drawDotGrid(c, shape, layout, spacing, r, w, h, offsetX, offsetY) {
+    let row = 0;
+    for (let y = spacing / 2; y < h; y += spacing, row++) {
+      const rowOffset = (layout === 'brick' && row % 2 === 1) ? spacing / 2 : 0;
+      for (let x = spacing / 2 + rowOffset; x < w; x += spacing) {
+        drawDotShape(c, shape, offsetX + x, offsetY + y, r);
+      }
+    }
+  }
+
   function drawPatternOverlay(c, p, w, h, offsetX, offsetY) {
     if (!p || p.type === 'none') return;
     offsetX = offsetX || 0;
@@ -15100,22 +15174,17 @@ document.addEventListener('DOMContentLoaded', () => {
       c.stroke();
     } else if (p.type === 'dots') {
       const r = Math.max(0.5, (p.thickness || 1) * 0.9);
+      const shape = p.dotShape || 'circle';
+      const layout = p.dotLayout || 'grid';
       if (p.randomize) {
         const rnd = makeRng((p.seed||1) * 1000 + 777);
         renderOrganicTexturePatches(c, w, h, offsetX, offsetY, rnd, (tctx, tw, th) => {
           tctx.fillStyle = p.color;
-          for (let x = spacing / 2; x < tw; x += spacing) {
-            for (let y = spacing / 2; y < th; y += spacing) {
-              tctx.beginPath(); tctx.arc(x, y, r, 0, Math.PI * 2); tctx.fill();
-            }
-          }
+          drawDotGrid(tctx, shape, layout, spacing, r, tw, th, 0, 0);
         });
       } else {
-        for (let x = spacing / 2; x < w; x += spacing) {
-          for (let y = spacing / 2; y < h; y += spacing) {
-            c.beginPath(); c.arc(offsetX + x, offsetY + y, r, 0, Math.PI * 2); c.fill();
-          }
-        }
+        c.fillStyle = p.color;
+        drawDotGrid(c, shape, layout, spacing, r, w, h, offsetX, offsetY);
       }
     } else if (p.type === 'diagonal') {
       c.beginPath();
@@ -15356,6 +15425,8 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('patThicknessRow').style.setProperty('display', (a.pattern.patternType==='diagonal') ? 'none':'flex', 'important');
       document.getElementById('patWaveAmpRow').style.setProperty('display', (a.pattern.patternType==='wave') ? 'flex':'none', 'important');
       document.getElementById('patWaveCurveRow').style.setProperty('display', (a.pattern.patternType==='wave') ? 'flex':'none', 'important');
+      document.getElementById('patDotShapeRow').style.setProperty('display', (a.pattern.patternType==='dots') ? 'flex':'none', 'important');
+      document.getElementById('patDotLayoutRow').style.setProperty('display', (a.pattern.patternType==='dots') ? 'flex':'none', 'important');
       document.getElementById('patWaveDirRow').style.setProperty('display', (a.pattern.patternType==='wave') ? 'flex':'none', 'important');
       const canRandomize = (a.pattern.patternType==='dots'||a.pattern.patternType==='cross'||a.pattern.patternType==='denim'||a.pattern.patternType==='fabric');
       const randomMaskBtn = document.querySelector('[data-masktype="random"]');
@@ -15454,6 +15525,24 @@ document.addEventListener('DOMContentLoaded', () => {
       const a=getActive(); if(!a || a.type!=='pattern') return;
       a.pattern.waveDir = btn.dataset.wavedir;
       document.querySelectorAll('[data-wavedir]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    });
+  });
+  document.querySelectorAll('[data-dotshape]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const a=getActive(); if(!a || a.type!=='pattern') return;
+      a.pattern.dotShape = btn.dataset.dotshape;
+      document.querySelectorAll('[data-dotshape]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    });
+  });
+  document.querySelectorAll('[data-dotlayout]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const a=getActive(); if(!a || a.type!=='pattern') return;
+      a.pattern.dotLayout = btn.dataset.dotlayout;
+      document.querySelectorAll('[data-dotlayout]').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
       render();
     });
@@ -16495,9 +16584,13 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('patThicknessRow').style.setProperty('display', (a.pattern.patternType==='diagonal') ? 'none':'flex', 'important');
       document.getElementById('patWaveAmpRow').style.setProperty('display', (a.pattern.patternType==='wave') ? 'flex':'none', 'important');
       document.getElementById('patWaveCurveRow').style.setProperty('display', (a.pattern.patternType==='wave') ? 'flex':'none', 'important');
+      document.getElementById('patDotShapeRow').style.setProperty('display', (a.pattern.patternType==='dots') ? 'flex':'none', 'important');
+      document.getElementById('patDotLayoutRow').style.setProperty('display', (a.pattern.patternType==='dots') ? 'flex':'none', 'important');
       document.getElementById('patWaveDirRow').style.setProperty('display', (a.pattern.patternType==='wave') ? 'flex':'none', 'important');
       setRange('f_patWaveAmp', a.pattern.waveAmp != null ? a.pattern.waveAmp : Math.round(a.pattern.spacing*0.25));
       setRange('f_patWaveCurve', a.pattern.waveCurve || 0);
+      document.querySelectorAll('[data-dotshape]').forEach(b=>b.classList.toggle('active', b.dataset.dotshape===(a.pattern.dotShape||'circle')));
+      document.querySelectorAll('[data-dotlayout]').forEach(b=>b.classList.toggle('active', b.dataset.dotlayout===(a.pattern.dotLayout||'grid')));
       document.querySelectorAll('[data-wavedir]').forEach(b=>b.classList.toggle('active', b.dataset.wavedir===(a.pattern.waveDir||'h')));
       { const canRandomize = (a.pattern.patternType==='dots'||a.pattern.patternType==='cross'||a.pattern.patternType==='denim'||a.pattern.patternType==='fabric');
         const randomMaskBtn = document.querySelector('[data-masktype="random"]');
@@ -17405,6 +17498,20 @@ document.addEventListener('DOMContentLoaded', () => {
       mctx.fillRect(0,0,w,h);
       mctx.globalCompositeOperation = 'destination-out';
       drawBlob(pad+boxW/2, pad+boxH/2);
+    } else if(mask.type==='side-left' || mask.type==='side-right' || mask.type==='side-top' || mask.type==='side-bottom'){
+      const rx = Math.min(boxW, reachX);
+      const ry = Math.min(boxH, reachY);
+      let x0,y0,x1,y1;
+      if(mask.type==='side-left'){ x0=pad; y0=0; x1=pad+rx; y1=0; }
+      else if(mask.type==='side-right'){ x0=pad+boxW; y0=0; x1=pad+boxW-rx; y1=0; }
+      else if(mask.type==='side-top'){ x0=pad; y0=pad; x1=pad; y1=pad+ry; }
+      else { x0=pad; y0=pad+boxH; x1=pad; y1=pad+boxH-ry; }
+      const g = mctx.createLinearGradient(x0,y0,x1,y1);
+      g.addColorStop(0, 'rgba(255,255,255,1)');
+      g.addColorStop(innerStop, 'rgba(255,255,255,1)');
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+      mctx.fillStyle = g;
+      mctx.fillRect(0,0,w,h);
     }
     return mc;
   }
@@ -17426,7 +17533,7 @@ document.addEventListener('DOMContentLoaded', () => {
       c.beginPath();
       c.rect(pad, pad, layer.width, layer.height);
       c.clip();
-      drawPatternOverlay(c, {type:p.patternType, spacing:p.spacing, thickness:p.thickness, color:p.color, opacity:100, randomize:p.randomize, seed:p.seed, waveAmp:p.waveAmp, waveDir:p.waveDir, waveCurve:p.waveCurve}, layer.width, layer.height, pad, pad);
+      drawPatternOverlay(c, {type:p.patternType, spacing:p.spacing, thickness:p.thickness, color:p.color, opacity:100, randomize:p.randomize, seed:p.seed, waveAmp:p.waveAmp, waveDir:p.waveDir, waveCurve:p.waveCurve, dotShape:p.dotShape, dotLayout:p.dotLayout}, layer.width, layer.height, pad, pad);
       c.restore();
     }
 
