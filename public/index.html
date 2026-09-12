@@ -2433,6 +2433,9 @@
           <span class="hint" id="cropPreviewLabel">1 / 1</span>
           <button class="ghost" id="cropNextBtn" style="flex:none; padding:4px 12px;">→</button>
         </div>
+        <div style="text-align:center; margin-top:8px;">
+          <button class="ghost" id="cropRemoveCurrent" style="display:none; padding:6px 14px; font-size:12.5px; color:#ff8a8a; border-color:#ff8a8a55;">Usuń obrazek</button>
+        </div>
         <p class="hint" style="text-align:center;">Przesuwaj ramkę i rogi palcem lub myszką — ta sama ramka (proporcjonalnie) zostanie użyta dla wszystkich obrazków</p>
         <div class="actions" style="margin-top:16px;">
           <button class="primary" id="cropDownload" disabled>Pobierz Wycięte</button>
@@ -3375,6 +3378,7 @@
       <button class="btn primary" id="addLayerBtn">+ Dodaj tekst</button>
       <button class="btn" id="openRadialBtn" style="margin-top:8px;">+ Dodaj obiekt...</button>
       <input type="file" id="imageFile" accept="image/*,.psd,.psb" style="display:none;">
+      <input type="file" id="imageFilePhotos" accept="image/*" style="display:none;">
     </div>
     <div id="layerList"></div>
     <div id="layerActions">
@@ -6016,6 +6020,7 @@ var cropPreviewNav = document.getElementById('cropPreviewNav');
 var cropPreviewLabel = document.getElementById('cropPreviewLabel');
 var cropPrevBtn = document.getElementById('cropPrevBtn');
 var cropNextBtn = document.getElementById('cropNextBtn');
+var cropRemoveCurrentBtn = document.getElementById('cropRemoveCurrent');
 
 // Draws the path for a given mask shape into any 2d context, sized to (x,y,w,h)
 function traceCropShapePath(ctx, shape, x, y, w, h) {
@@ -6134,7 +6139,27 @@ function updateCropPreviewNav() {
   } else {
     cropPreviewNav.style.display = 'none';
   }
+  cropRemoveCurrentBtn.style.display = cropImages.length > 0 ? 'inline-block' : 'none';
 }
+
+function removeCropImageAt(i) {
+  cropImages.splice(i, 1);
+  if (cropImages.length === 0) {
+    cropImageObj = null; cropActiveIndex = -1;
+    cropDownloadBtn.disabled = true;
+    crCtx.clearRect(0, 0, cropCanvas.width, cropCanvas.height);
+    renderCropBatchList();
+    updateCropPreviewNav();
+    return;
+  }
+  const newIdx = Math.min(i, cropImages.length - 1);
+  setCropPreviewIndex(newIdx, false);
+}
+
+cropRemoveCurrentBtn.addEventListener('click', () => {
+  if (cropActiveIndex < 0 || cropActiveIndex >= cropImages.length) return;
+  removeCropImageAt(cropActiveIndex);
+});
 
 cropPrevBtn.addEventListener('click', () => {
   const idx = (cropActiveIndex - 1 + cropImages.length) % cropImages.length;
@@ -6172,17 +6197,7 @@ function renderCropBatchList() {
     rm.style.cssText = 'position:absolute; top:0; right:0; width:16px; height:16px; background:rgba(0,0,0,0.7); color:#fff; font-size:12px; line-height:16px; text-align:center; border-radius:0 0 0 6px;';
     rm.addEventListener('click', (ev) => {
       ev.stopPropagation();
-      cropImages.splice(i, 1);
-      if (cropImages.length === 0) {
-        cropImageObj = null; cropActiveIndex = -1;
-        cropDownloadBtn.disabled = true;
-        crCtx.clearRect(0, 0, cropCanvas.width, cropCanvas.height);
-        renderCropBatchList();
-        updateCropPreviewNav();
-        return;
-      }
-      const newIdx = Math.min(i, cropImages.length - 1);
-      setCropPreviewIndex(newIdx, i === cropActiveIndex ? false : false);
+      removeCropImageAt(i);
     });
     thumb.appendChild(rm);
     thumb.addEventListener('click', () => setCropPreviewIndex(i, false));
@@ -8255,6 +8270,11 @@ function dhRenderGalleryControls(item) {
   return wrap;
 }
 
+function isImageUrl(url) {
+  if (!url) return false;
+  return /^data:image\//i.test(url) || /\.(png|jpe?g|gif|webp|bmp|svg)(\?.*)?(#.*)?$/i.test(url);
+}
+
 function dhRenderFileControls(item) {
   const wrap = document.createElement('div');
   wrap.style.cssText = 'flex:1;display:flex;flex-direction:column;gap:8px;';
@@ -8273,9 +8293,10 @@ function dhRenderFileControls(item) {
 
   const linkWrap = document.createElement('div');
   linkWrap.style.cssText = 'display:' + (!item.textMode ? 'flex' : 'none') + ';align-items:center;gap:10px;flex-wrap:wrap;';
-  const thumb = document.createElement('div');
-  thumb.style.cssText = 'width:36px;height:36px;border-radius:6px;background:#1c2226;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none;';
-  thumb.textContent = '📎';
+  const thumb = document.createElement(isImageUrl(item.url) ? 'img' : 'div');
+  thumb.style.cssText = 'width:36px;height:36px;border-radius:6px;background:#1c2226;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none;object-fit:cover;';
+  if (isImageUrl(item.url)) thumb.src = item.url;
+  else thumb.textContent = '📎';
   linkWrap.appendChild(thumb);
   const nameSpan = document.createElement('span');
   nameSpan.style.cssText = 'font-size:12px;color:var(--ink-dim);flex:1;min-width:100px;word-break:break-all;';
@@ -15019,7 +15040,7 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
   function handleRadialAction(action){
     if(action==='text'){ addLayer('Nowy tekst'); goToStyleTabOnMobile(); }
-    else if(action==='image'){ document.getElementById('imageFile').click(); }
+    else if(action==='image'){ openImageSourceChoice(); }
     else if(action==='wave'){ addWaveLayer(); goToStyleTabOnMobile(); }
     else if(action==='waterwave'){ addWaterWaveLayer(); goToStyleTabOnMobile(); }
     else if(action==='fireburst'){ addFireburstLayer(); goToStyleTabOnMobile(); }
@@ -15046,6 +15067,58 @@ document.addEventListener('DOMContentLoaded', () => {
   function closeRadialMenu(){
     document.getElementById('radialOverlay').classList.remove('open');
   }
+  function openImageSourceChoice(){
+    const menu = document.getElementById('radialMenu');
+    menu.innerHTML = '';
+    const photosBtn = document.createElement('button');
+    photosBtn.type = 'button';
+    photosBtn.className = 'radial-item';
+    photosBtn.innerHTML = '<span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span><span class="lbl">Zdjęcia</span>';
+    photosBtn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      closeRadialMenu();
+      document.getElementById('imageFilePhotos').click();
+    });
+    const filesBtn = document.createElement('button');
+    filesBtn.type = 'button';
+    filesBtn.className = 'radial-item';
+    filesBtn.innerHTML = '<span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span class="lbl">Pliki (PSD/PSB)</span>';
+    filesBtn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      closeRadialMenu();
+      document.getElementById('imageFile').click();
+    });
+    const assetsBtn = document.createElement('button');
+    assetsBtn.type = 'button';
+    assetsBtn.className = 'radial-item';
+    assetsBtn.innerHTML = '<span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span><span class="lbl">Z Zasobów</span>';
+    assetsBtn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      closeRadialMenu();
+      if (typeof window.openAssetPicker !== 'function') return;
+      window.openAssetPicker((url, asset) => {
+        const img = new Image();
+        img.onload = () => {
+          addImageLayer(img, (asset && asset.name) ? asset.name : 'Obraz z zasobów', url);
+          goToStyleTabOnMobile();
+        };
+        img.src = url;
+      });
+    });
+    menu.appendChild(photosBtn);
+    menu.appendChild(filesBtn);
+    menu.appendChild(assetsBtn);
+    document.getElementById('radialOverlay').classList.add('open');
+  }
+  document.getElementById('imageFilePhotos').addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    loadImageFile(file, (img, dataUrl)=>{
+      addImageLayer(img, file.name, dataUrl);
+      goToStyleTabOnMobile();
+    });
+    e.target.value = '';
+  });
   document.getElementById('openRadialBtn').addEventListener('click', openRadialMenu);
   document.getElementById('radialOverlay').addEventListener('click', (e)=>{
     if(e.target.id==='radialOverlay') closeRadialMenu();
@@ -20366,6 +20439,11 @@ if(fDz && fInp) {
   function enhanceRangeSlider(range) {
     if (range.dataset.numEnhanced) return;
     range.dataset.numEnhanced = '1';
+
+    // Niektóre suwaki (np. "Skala (zbiorczo)" w Masowo) mają już własne,
+    // ręcznie dodane pole liczbowe obok — nie dokładamy wtedy drugiego.
+    const existingNumSibling = range.parentElement && range.parentElement.querySelector('input[type="number"]');
+    if (existingNumSibling) return;
 
     const num = document.createElement('input');
     num.type = 'number';
