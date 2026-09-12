@@ -2373,10 +2373,12 @@
           <button class="ghost" id="cropAssetsBtn" style="flex:1;">Z Zasobów</button>
         </div>
         <div class="dropzone" id="cropDropzone">
-          Kliknij lub upuść obrazek<br>
-          <span class="hint">Wytnij fragment idealny na emotkę</span>
-          <input type="file" id="cropFileInput" accept="image/*">
+          Kliknij lub upuść obrazki<br>
+          <span class="hint">Można wybrać kilka naraz — wszystkie zostaną przycięte tak samo</span>
+          <input type="file" id="cropFileInput" accept="image/*" multiple>
         </div>
+
+        <div id="cropBatchList" style="display:none; flex-wrap:wrap; gap:6px; margin-top:10px;"></div>
 
         <div class="divider"></div>
 
@@ -2387,6 +2389,10 @@
               <option value="square">Kwadrat (Brak zaokrągleń)</option>
               <option value="roundsquare">Squircle (Zaokrąglony kwadrat)</option>
               <option value="circle">Koło</option>
+              <option value="triangle">Trójkąt</option>
+              <option value="diamond">Romb</option>
+              <option value="hexagon">Sześciokąt</option>
+              <option value="star">Gwiazda</option>
             </select>
           </div>
         </div>
@@ -2400,6 +2406,13 @@
           </div>
         </div>
 
+        <div class="row" style="margin-top:12px;">
+          <div class="field">
+            <label>Rozmiar wyjściowy (px)</label>
+            <input type="number" id="cropOutputSize" value="512" min="16" max="4096" style="width:100%;">
+          </div>
+        </div>
+
       </div>
     </div>
     <div class="pane-preview">
@@ -2407,7 +2420,12 @@
         <div class="preview-area" style="padding:0; overflow:hidden; border:none; display:block;">
           <canvas id="cropCanvas" width="400" height="400" style="display:block; width:100%; height:auto; border-radius:12px; border: 1px solid var(--panel-edge);"></canvas>
         </div>
-        <p class="hint" style="text-align:center;">Przesuwaj ramkę i rogi palcem lub myszką</p>
+        <div id="cropPreviewNav" style="display:none; align-items:center; justify-content:center; gap:12px; margin-top:8px;">
+          <button class="ghost" id="cropPrevBtn" style="flex:none; padding:4px 12px;">←</button>
+          <span class="hint" id="cropPreviewLabel">1 / 1</span>
+          <button class="ghost" id="cropNextBtn" style="flex:none; padding:4px 12px;">→</button>
+        </div>
+        <p class="hint" style="text-align:center;">Przesuwaj ramkę i rogi palcem lub myszką — ta sama ramka (proporcjonalnie) zostanie użyta dla wszystkich obrazków</p>
         <div class="actions" style="margin-top:16px;">
           <button class="primary" id="cropDownload" disabled>Pobierz Wycięte</button>
         </div>
@@ -5659,7 +5677,9 @@ function detectBackgroundColor(img) {
 
 function colorDistance(r1, g1, b1, r2, g2, b2) { return Math.sqrt((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2); }
 
-var cropImageObj = null;
+var cropImages = []; // { img, file, name }
+var cropActiveIndex = -1;
+var cropImageObj = null; // currently previewed image (reference for the shared crop rect)
 var cropCanvas = document.getElementById('cropCanvas');
 var crCtx = cropCanvas.getContext('2d');
 var cropRect = { x: 50, y: 50, w: 200, h: 200 };
@@ -5673,41 +5693,184 @@ var cropFileInput = document.getElementById('cropFileInput');
 var cropDownloadBtn = document.getElementById('cropDownload');
 var cropMaskShape = document.getElementById('cropMaskShape');
 var cropForceSquare = document.getElementById('cropForceSquare');
+var cropOutputSize = document.getElementById('cropOutputSize');
+var cropBatchList = document.getElementById('cropBatchList');
+var cropPreviewNav = document.getElementById('cropPreviewNav');
+var cropPreviewLabel = document.getElementById('cropPreviewLabel');
+var cropPrevBtn = document.getElementById('cropPrevBtn');
+var cropNextBtn = document.getElementById('cropNextBtn');
+
+// Draws the path for a given mask shape into any 2d context, sized to (x,y,w,h)
+function traceCropShapePath(ctx, shape, x, y, w, h) {
+  const cx = x + w / 2, cy = y + h / 2;
+  ctx.beginPath();
+  if (shape === 'circle') {
+    ctx.arc(cx, cy, Math.min(w, h) / 2, 0, Math.PI * 2);
+  } else if (shape === 'roundsquare') {
+    if (ctx.roundRect) ctx.roundRect(x, y, w, h, Math.min(w, h) * 0.2);
+    else ctx.rect(x, y, w, h);
+  } else if (shape === 'triangle') {
+    ctx.moveTo(cx, y);
+    ctx.lineTo(x + w, y + h);
+    ctx.lineTo(x, y + h);
+    ctx.closePath();
+  } else if (shape === 'diamond') {
+    ctx.moveTo(cx, y);
+    ctx.lineTo(x + w, cy);
+    ctx.lineTo(cx, y + h);
+    ctx.lineTo(x, cy);
+    ctx.closePath();
+  } else if (shape === 'hexagon') {
+    const r = Math.min(w, h) / 2;
+    for (let i = 0; i < 6; i++) {
+      const angle = Math.PI / 3 * i - Math.PI / 2;
+      const px = cx + r * Math.cos(angle);
+      const py = cy + r * Math.sin(angle);
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+  } else if (shape === 'star') {
+    const rOuter = Math.min(w, h) / 2;
+    const rInner = rOuter * 0.42;
+    for (let i = 0; i < 10; i++) {
+      const angle = Math.PI / 5 * i - Math.PI / 2;
+      const r = i % 2 === 0 ? rOuter : rInner;
+      const px = cx + r * Math.cos(angle);
+      const py = cy + r * Math.sin(angle);
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+  } else {
+    ctx.rect(x, y, w, h);
+  }
+}
 
 cropDropzone.addEventListener('click', () => cropFileInput.click());
 cropDropzone.addEventListener('dragover', e => { e.preventDefault(); cropDropzone.classList.add('drag'); });
 cropDropzone.addEventListener('dragleave', () => cropDropzone.classList.remove('drag'));
-cropDropzone.addEventListener('drop', e => { e.preventDefault(); cropDropzone.classList.remove('drag'); if (e.dataTransfer.files[0]) loadCropFile(e.dataTransfer.files[0]); });
-cropFileInput.addEventListener('change', () => { if (cropFileInput.files[0]) loadCropFile(cropFileInput.files[0]); });
+cropDropzone.addEventListener('drop', e => { e.preventDefault(); cropDropzone.classList.remove('drag'); if (e.dataTransfer.files.length) loadCropFiles(e.dataTransfer.files); });
+cropFileInput.addEventListener('change', () => { if (cropFileInput.files.length) loadCropFiles(cropFileInput.files); cropFileInput.value = ''; });
 
-function loadCropFile(file) {
-  if (!file.type.startsWith('image/')) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const img = new Image();
-    img.onload = () => {
-      cropImageObj = img;
-      const maxWidth = 500;
-      const maxHeight = 500;
-      let ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
-      if(ratio > 1) ratio = 1;
-      
-      cropCanvas.width = img.width * ratio;
-      cropCanvas.height = img.height * ratio;
-      
-      const s = Math.min(cropCanvas.width, cropCanvas.height) * 0.6;
-      cropRect = {
-        x: (cropCanvas.width - s) / 2,
-        y: (cropCanvas.height - s) / 2,
-        w: s,
-        h: s
+function loadCropFiles(fileList) {
+  const files = Array.from(fileList).filter(f => f.type.startsWith('image/'));
+  if (!files.length) return;
+  const wasEmpty = cropImages.length === 0;
+  let loaded = 0;
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        cropImages.push({ img, name: file.name });
+        loaded++;
+        renderCropBatchList();
+        if (wasEmpty && loaded === 1) {
+          setCropPreviewIndex(0, true);
+        } else {
+          updateCropPreviewNav();
+        }
+        cropDownloadBtn.disabled = cropImages.length === 0;
       };
-      cropDownloadBtn.disabled = false;
-      drawCropCanvas();
+      img.src = e.target.result;
     };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
+    reader.readAsDataURL(file);
+  });
+}
+
+function setCropPreviewIndex(idx, resetRect) {
+  if (idx < 0 || idx >= cropImages.length) return;
+  cropActiveIndex = idx;
+  cropImageObj = cropImages[idx].img;
+  const img = cropImageObj;
+  const maxWidth = 500, maxHeight = 500;
+  let ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
+  if (ratio > 1) ratio = 1;
+  cropCanvas.width = img.width * ratio;
+  cropCanvas.height = img.height * ratio;
+
+  if (resetRect) {
+    const s = Math.min(cropCanvas.width, cropCanvas.height) * 0.6;
+    cropRect = {
+      x: (cropCanvas.width - s) / 2,
+      y: (cropCanvas.height - s) / 2,
+      w: s,
+      h: s
+    };
+  } else {
+    // keep the same relative (fractional) crop area on the new preview image
+    cropRect = {
+      x: cropRect.fx * cropCanvas.width,
+      y: cropRect.fy * cropCanvas.height,
+      w: cropRect.fw * cropCanvas.width,
+      h: cropRect.fh * cropCanvas.height
+    };
+  }
+  updateCropPreviewNav();
+  renderCropBatchList();
+  drawCropCanvas();
+}
+
+function updateCropPreviewNav() {
+  if (cropImages.length > 1) {
+    cropPreviewNav.style.display = 'flex';
+    cropPreviewLabel.textContent = `${cropActiveIndex + 1} / ${cropImages.length}`;
+  } else {
+    cropPreviewNav.style.display = 'none';
+  }
+}
+
+cropPrevBtn.addEventListener('click', () => {
+  const idx = (cropActiveIndex - 1 + cropImages.length) % cropImages.length;
+  setCropPreviewIndex(idx, false);
+});
+cropNextBtn.addEventListener('click', () => {
+  const idx = (cropActiveIndex + 1) % cropImages.length;
+  setCropPreviewIndex(idx, false);
+});
+
+function updateCropDownloadLabel() {
+  cropDownloadBtn.textContent = cropImages.length > 1
+    ? `Pobierz Wszystkie (${cropImages.length}) — ZIP`
+    : 'Pobierz Wycięte';
+}
+
+function renderCropBatchList() {
+  updateCropDownloadLabel();
+  if (cropImages.length <= 1) {
+    cropBatchList.style.display = 'none';
+    cropBatchList.innerHTML = '';
+    return;
+  }
+  cropBatchList.style.display = 'flex';
+  cropBatchList.innerHTML = '';
+  cropImages.forEach((item, i) => {
+    const thumb = document.createElement('div');
+    thumb.style.cssText = `position:relative; width:52px; height:52px; border-radius:8px; overflow:hidden; cursor:pointer; border:2px solid ${i === cropActiveIndex ? 'var(--accent)' : 'var(--panel-edge)'};`;
+    const im = document.createElement('img');
+    im.src = item.img.src;
+    im.style.cssText = 'width:100%; height:100%; object-fit:cover; display:block;';
+    thumb.appendChild(im);
+    const rm = document.createElement('div');
+    rm.textContent = '×';
+    rm.style.cssText = 'position:absolute; top:0; right:0; width:16px; height:16px; background:rgba(0,0,0,0.7); color:#fff; font-size:12px; line-height:16px; text-align:center; border-radius:0 0 0 6px;';
+    rm.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      cropImages.splice(i, 1);
+      if (cropImages.length === 0) {
+        cropImageObj = null; cropActiveIndex = -1;
+        cropDownloadBtn.disabled = true;
+        crCtx.clearRect(0, 0, cropCanvas.width, cropCanvas.height);
+        renderCropBatchList();
+        updateCropPreviewNav();
+        return;
+      }
+      const newIdx = Math.min(i, cropImages.length - 1);
+      setCropPreviewIndex(newIdx, i === cropActiveIndex ? false : false);
+    });
+    thumb.appendChild(rm);
+    thumb.addEventListener('click', () => setCropPreviewIndex(i, false));
+    cropBatchList.appendChild(thumb);
+  });
 }
 
 function drawCropCanvas() {
@@ -5728,15 +5891,7 @@ function drawCropCanvas() {
   
   crCtx.save();
   const shape = cropMaskShape.value;
-  crCtx.beginPath();
-  if(shape === 'circle') {
-    crCtx.arc(cropRect.x + cropRect.w/2, cropRect.y + cropRect.h/2, cropRect.w/2, 0, Math.PI*2);
-  } else if (shape === 'roundsquare') {
-    if(crCtx.roundRect) crCtx.roundRect(cropRect.x, cropRect.y, cropRect.w, cropRect.h, cropRect.w * 0.2);
-    else crCtx.rect(cropRect.x, cropRect.y, cropRect.w, cropRect.h);
-  } else {
-    crCtx.rect(cropRect.x, cropRect.y, cropRect.w, cropRect.h);
-  }
+  traceCropShapePath(crCtx, shape, cropRect.x, cropRect.y, cropRect.w, cropRect.h);
   crCtx.clip();
   
   crCtx.clearRect(0, 0, cropCanvas.width, cropCanvas.height);
@@ -5766,6 +5921,13 @@ function drawCropCanvas() {
     crCtx.arc(hx, hy, handleSize/2, 0, Math.PI*2);
     crCtx.fill();
   });
+
+  // remember the crop area as a fraction of the canvas so it can be re-applied
+  // (at the same relative position/size) to every image in the batch
+  cropRect.fx = cropRect.x / cropCanvas.width;
+  cropRect.fy = cropRect.y / cropCanvas.height;
+  cropRect.fw = cropRect.w / cropCanvas.width;
+  cropRect.fh = cropRect.h / cropCanvas.height;
 }
 
 function getCropMousePos(e) {
@@ -5887,37 +6049,80 @@ cropForceSquare.addEventListener('change', () => {
   }
 });
 
-cropDownloadBtn.addEventListener('click', () => {
-  if(!cropImageObj) return;
-  const scaleX = cropImageObj.width / cropCanvas.width;
-  const scaleY = cropImageObj.height / cropCanvas.height;
-  const realX = cropRect.x * scaleX;
-  const realY = cropRect.y * scaleY;
-  const realW = cropRect.w * scaleX;
-  const realH = cropRect.h * scaleY;
-  
+// Crops a single loaded image using the shared fractional crop rect + selected shape,
+// scaled to a uniform output size, and returns a canvas.
+function renderCroppedImage(img) {
+  const fx = cropRect.fx ?? (cropRect.x / cropCanvas.width);
+  const fy = cropRect.fy ?? (cropRect.y / cropCanvas.height);
+  const fw = cropRect.fw ?? (cropRect.w / cropCanvas.width);
+  const fh = cropRect.fh ?? (cropRect.h / cropCanvas.height);
+
+  const realX = fx * img.width;
+  const realY = fy * img.height;
+  const realW = fw * img.width;
+  const realH = fh * img.height;
+
+  let outW = parseInt(cropOutputSize.value, 10) || 512;
+  let outH = outW;
+  if (!cropForceSquare.checked) {
+    // preserve the crop's own aspect ratio when not forced to a square
+    outH = Math.round(outW * (realH / realW));
+  }
+
   const exportCanvas = document.createElement('canvas');
-  exportCanvas.width = realW;
-  exportCanvas.height = realH;
+  exportCanvas.width = outW;
+  exportCanvas.height = outH;
   const extCtx = exportCanvas.getContext('2d');
-  
+
   const shape = cropMaskShape.value;
-  if (shape === 'circle') {
-    extCtx.beginPath();
-    extCtx.arc(realW/2, realH/2, realW/2, 0, Math.PI*2);
-    extCtx.clip();
-  } else if (shape === 'roundsquare') {
-    extCtx.beginPath();
-    if(extCtx.roundRect) extCtx.roundRect(0, 0, realW, realH, realW * 0.2);
-    else extCtx.rect(0, 0, realW, realH);
+  if (shape !== 'square') {
+    traceCropShapePath(extCtx, shape, 0, 0, outW, outH);
     extCtx.clip();
   }
-  extCtx.drawImage(cropImageObj, -realX, -realY, cropImageObj.width, cropImageObj.height);
-  
-  const link = document.createElement('a');
-  link.download = `wyciete-${shape}.png`;
-  link.href = exportCanvas.toDataURL('image/png');
-  link.click();
+  extCtx.drawImage(img, realX, realY, realW, realH, 0, 0, outW, outH);
+  return exportCanvas;
+}
+
+function sanitizeCropName(name) {
+  return name.replace(/\.[^/.]+$/, '').replace(/[^a-z0-9_-]+/gi, '_').slice(0, 60) || 'obrazek';
+}
+
+cropDownloadBtn.addEventListener('click', async () => {
+  if (!cropImages.length) return;
+  const shape = cropMaskShape.value;
+
+  if (cropImages.length === 1) {
+    const canvas = renderCroppedImage(cropImages[0].img);
+    const link = document.createElement('a');
+    link.download = `wyciete-${shape}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    return;
+  }
+
+  if (typeof JSZip === 'undefined') { alert('Brak biblioteki ZIP.'); return; }
+  const originalLabel = cropDownloadBtn.textContent;
+  cropDownloadBtn.disabled = true;
+  cropDownloadBtn.textContent = 'Pakowanie...';
+  try {
+    const zip = new JSZip();
+    cropImages.forEach((item, i) => {
+      const canvas = renderCroppedImage(item.img);
+      const dataUrl = canvas.toDataURL('image/png');
+      const base64 = dataUrl.split(',')[1];
+      const fname = `${String(i + 1).padStart(2, '0')}-${sanitizeCropName(item.name)}-${shape}.png`;
+      zip.file(fname, base64, { base64: true });
+    });
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const link = document.createElement('a');
+    link.download = 'wyciete-obrazki.zip';
+    link.href = URL.createObjectURL(blob);
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 5000);
+  } finally {
+    cropDownloadBtn.disabled = false;
+    cropDownloadBtn.textContent = originalLabel;
+  }
 });
 
 var customRoleImage = null;
