@@ -2540,7 +2540,7 @@
             <label for="imageBgStyle">Styl tła</label>
             <select id="imageBgStyle">
               <option value="none">Brak (Przezroczyste)</option>
-              <option value="solid">Wypełnione (Gradient)</option>
+              <option value="solid">Wypełnione</option>
               <option value="outlined">Z ramką (Wypełnione w środku)</option>
             </select>
           </div>
@@ -2552,8 +2552,23 @@
             <label for="imageBgBorderOpacity">Przezr. ramki: <span id="imageBgBorderOpacityVal">100</span>%</label>
             <input type="range" id="imageBgBorderOpacity" min="0" max="100" step="5" value="100">
           </div>
+          <div class="field">
+            <label for="imageBgRounding">Zaokrąglenie rogów (Tło i ramka): <span id="imageBgRoundingVal">45</span>px</label>
+            <input type="range" id="imageBgRounding" min="0" max="500" step="1" value="45">
+          </div>
         </div>
         <div class="row" id="imageBgColors" style="display:none; margin-top:6px; flex-direction:column; gap:10px;">
+          <div class="field" style="width:100%;">
+            <label for="imageBgFillType">Wypełnienie tła</label>
+            <select id="imageBgFillType">
+              <option value="solid">Jednolity kolor</option>
+              <option value="gradient" selected>Gradient</option>
+            </select>
+          </div>
+          <div id="imageBgSolidWrap" style="display:none; width:100%;">
+            <label for="imageBgColorA">Kolor tła</label>
+            <input type="color" id="imageBgColorA" value="#3b3b3f">
+          </div>
           <div id="imageBgGradientWrap" style="width:100%;">
             <label style="color:var(--accent);">Gradient Tła</label>
             <div class="gradient-editor" id="imageBgGradientEditor" style="width:100%;">
@@ -2576,7 +2591,18 @@
             </div>
           </div>
           <div id="imageBgBorderWrap" style="display:none; width:100%; margin-top:10px; padding-top:10px; border-top:1px dashed var(--panel-edge);">
-            <label style="color:var(--accent);">Gradient Ramki</label>
+            <label style="color:var(--accent);">Kolor / Gradient Ramki</label>
+            <div class="field" style="width:100%; margin-bottom:10px;">
+              <label for="imageBgBorderFillType">Wypełnienie ramki</label>
+              <select id="imageBgBorderFillType">
+                <option value="solid">Jednolity kolor</option>
+                <option value="gradient" selected>Gradient</option>
+              </select>
+            </div>
+            <div id="imageBgBorderSolidWrap" style="display:none; width:100%; margin-bottom:10px;">
+              <label for="imageBgBorderColor">Kolor ramki</label>
+              <input type="color" id="imageBgBorderColor" value="#ffffff">
+            </div>
             <div class="gradient-editor" id="imageBgBorderGradientEditor" style="width:100%;">
               <button type="button" class="ghost gradient-add-btn">+ Dodaj odcień</button>
               <div class="gradient-bar-wrap"><div class="gradient-bar"></div></div>
@@ -2631,6 +2657,12 @@
         </div>
         <div class="divider"></div>
         <label>Rozmiar i cień (Zewnętrzny)</label>
+        <div class="row" style="margin-top:12px;">
+          <div class="field">
+            <label for="imageOutputSize">Maks. rozmiar wyjściowy: <span id="imageOutputSizeVal">800</span>px</label>
+            <input type="range" id="imageOutputSize" min="64" max="3000" step="1" value="800">
+          </div>
+        </div>
         <div class="row" style="margin-top:12px;">
           <div class="field">
             <label for="imageScale">Skala ikony wewnątrz tła: <span id="imageScaleVal">80</span>%</label>
@@ -2739,7 +2771,7 @@
             <label for="emojiBgStyle">Styl tła</label>
             <select id="emojiBgStyle">
               <option value="none">Brak (Przezroczyste)</option>
-              <option value="solid">Wypełnione (Gradient)</option>
+              <option value="solid">Wypełnione</option>
               <option value="outlined">Z ramką (Wypełnione w środku)</option>
             </select>
           </div>
@@ -2751,8 +2783,23 @@
             <label for="emojiBgBorderOpacity">Przezr. ramki: <span id="emojiBgBorderOpacityVal">100</span>%</label>
             <input type="range" id="emojiBgBorderOpacity" min="0" max="100" step="5" value="100">
           </div>
+          <div class="field">
+            <label for="emojiBgRounding">Zaokrąglenie rogów (Tło i ramka): <span id="emojiBgRoundingVal">45</span>px</label>
+            <input type="range" id="emojiBgRounding" min="0" max="500" step="1" value="45">
+          </div>
         </div>
         <div class="row" id="emojiBgColors" style="display:none; margin-top:6px; flex-direction:column; gap:10px;">
+          <div class="field" style="width:100%;">
+            <label for="emojiBgFillType">Wypełnienie tła</label>
+            <select id="emojiBgFillType">
+              <option value="solid">Jednolity kolor</option>
+              <option value="gradient" selected>Gradient</option>
+            </select>
+          </div>
+          <div id="emojiBgSolidWrap" style="display:none; width:100%;">
+            <label for="emojiBgColorA">Kolor tła</label>
+            <input type="color" id="emojiBgColorA" value="#3b3b3f">
+          </div>
           <div id="emojiBgGradientWrap" style="width:100%;">
             <label style="color:var(--accent);">Gradient Tła</label>
             <div class="gradient-editor" id="emojiBgGradientEditor" style="width:100%;">
@@ -2775,7 +2822,18 @@
             </div>
           </div>
           <div id="emojiBgBorderWrap" style="display:none; width:100%; margin-top:10px; padding-top:10px; border-top:1px dashed var(--panel-edge);">
-            <label style="color:var(--accent);">Gradient Ramki</label>
+            <label style="color:var(--accent);">Kolor / Gradient Ramki</label>
+            <div class="field" style="width:100%; margin-bottom:10px;">
+              <label for="emojiBgBorderFillType">Wypełnienie ramki</label>
+              <select id="emojiBgBorderFillType">
+                <option value="solid">Jednolity kolor</option>
+                <option value="gradient" selected>Gradient</option>
+              </select>
+            </div>
+            <div id="emojiBgBorderSolidWrap" style="display:none; width:100%; margin-bottom:10px;">
+              <label for="emojiBgBorderColor">Kolor ramki</label>
+              <input type="color" id="emojiBgBorderColor" value="#ffffff">
+            </div>
             <div class="gradient-editor" id="emojiBgBorderGradientEditor" style="width:100%;">
               <button type="button" class="ghost gradient-add-btn">+ Dodaj odcień</button>
               <div class="gradient-bar-wrap"><div class="gradient-bar"></div></div>
@@ -2978,7 +3036,7 @@
             <label for="batchBgStyle">Styl tła</label>
             <select id="batchBgStyle">
               <option value="none">Brak (Przezroczyste)</option>
-              <option value="solid">Wypełnione (Gradient)</option>
+              <option value="solid">Wypełnione</option>
               <option value="outlined">Z ramką (Wypełnione w środku)</option>
             </select>
           </div>
@@ -2990,8 +3048,23 @@
             <label for="batchBgBorderOpacity">Przezr. ramki: <span id="batchBgBorderOpacityVal">100</span>%</label>
             <input type="range" id="batchBgBorderOpacity" min="0" max="100" step="5" value="100">
           </div>
+          <div class="field">
+            <label for="batchBgRounding">Zaokrąglenie rogów (Tło i ramka): <span id="batchBgRoundingVal">45</span>px</label>
+            <input type="range" id="batchBgRounding" min="0" max="500" step="1" value="45">
+          </div>
         </div>
         <div class="row" id="batchBgColors" style="display:none; margin-top:6px; flex-direction:column; gap:10px;">
+          <div class="field" style="width:100%;">
+            <label for="batchBgFillType">Wypełnienie tła</label>
+            <select id="batchBgFillType">
+              <option value="solid">Jednolity kolor</option>
+              <option value="gradient" selected>Gradient</option>
+            </select>
+          </div>
+          <div id="batchBgSolidWrap" style="display:none; width:100%;">
+            <label for="batchBgColorA">Kolor tła</label>
+            <input type="color" id="batchBgColorA" value="#3b3b3f">
+          </div>
           <div id="batchBgGradientWrap" style="width:100%;">
             <label style="color:var(--accent);">Gradient Tła</label>
             <div class="gradient-editor" id="batchBgGradientEditor" style="width:100%;">
@@ -3014,7 +3087,18 @@
             </div>
           </div>
           <div id="batchBgBorderWrap" style="display:none; width:100%; margin-top:10px; padding-top:10px; border-top:1px dashed var(--panel-edge);">
-            <label style="color:var(--accent);">Gradient Ramki</label>
+            <label style="color:var(--accent);">Kolor / Gradient Ramki</label>
+            <div class="field" style="width:100%; margin-bottom:10px;">
+              <label for="batchBgBorderFillType">Wypełnienie ramki</label>
+              <select id="batchBgBorderFillType">
+                <option value="solid">Jednolity kolor</option>
+                <option value="gradient" selected>Gradient</option>
+              </select>
+            </div>
+            <div id="batchBgBorderSolidWrap" style="display:none; width:100%; margin-bottom:10px;">
+              <label for="batchBgBorderColor">Kolor ramki</label>
+              <input type="color" id="batchBgBorderColor" value="#ffffff">
+            </div>
             <div class="gradient-editor" id="batchBgBorderGradientEditor" style="width:100%;">
               <button type="button" class="ghost gradient-add-btn">+ Dodaj odcień</button>
               <div class="gradient-bar-wrap"><div class="gradient-bar"></div></div>
@@ -3069,6 +3153,12 @@
         </div>
         <div class="divider"></div>
         <label>Rozmiar i cień (Zewnętrzny)</label>
+        <div class="row" style="margin-top:12px;">
+          <div class="field">
+            <label for="batchOutputSize">Rozmiar wyjściowy emotek: <span id="batchOutputSizeVal">512</span>px</label>
+            <input type="range" id="batchOutputSize" min="16" max="2048" step="1" value="512">
+          </div>
+        </div>
         <div class="row" style="margin-top:6px;">
           <div class="field">
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
@@ -5112,6 +5202,26 @@ function updateBgUi(prefix) {
   const rowColors = document.getElementById(prefix + 'BgColors');
   const borderWrap = document.getElementById(prefix + 'BgBorderWrap');
   const borderOpacityField = document.getElementById(prefix + 'BgBorderOpacityField');
+
+  // Wypełnienie tła: jednolity kolor vs gradient (jeśli ta zakładka to obsługuje)
+  const bgFillType = document.getElementById(prefix + 'BgFillType');
+  const bgSolidWrap = document.getElementById(prefix + 'BgSolidWrap');
+  const bgGradWrap = document.getElementById(prefix + 'BgGradientWrap');
+  if (bgFillType) {
+    const isGrad = bgFillType.value === 'gradient';
+    if (bgSolidWrap) bgSolidWrap.style.display = isGrad ? 'none' : 'block';
+    if (bgGradWrap) bgGradWrap.style.display = isGrad ? 'block' : 'none';
+  }
+
+  // Wypełnienie ramki: jednolity kolor vs gradient (jeśli ta zakładka to obsługuje)
+  const borderFillType = document.getElementById(prefix + 'BgBorderFillType');
+  const borderSolidWrap = document.getElementById(prefix + 'BgBorderSolidWrap');
+  const borderGradEditor = document.getElementById(prefix + 'BgBorderGradientEditor');
+  if (borderFillType) {
+    const isGrad = borderFillType.value === 'gradient';
+    if (borderSolidWrap) borderSolidWrap.style.display = isGrad ? 'none' : 'block';
+    if (borderGradEditor) borderGradEditor.style.display = isGrad ? 'block' : 'none';
+  }
   
   if (style === 'none') {
     if (rowColors) rowColors.style.display = 'none';
@@ -5368,6 +5478,61 @@ function createGradientEditor(rootEl, opts) {
 
   render();
 
+  // --- Kopiuj / Wklej gradient (współdzielony schowek między wszystkimi edytorami gradientu) ---
+  const findTypeSelect = () => rootEl.querySelector('select[id$="GradientType"]') || rootEl.parentElement.querySelector('select[id$="GradientType"]');
+  if (!rootEl.querySelector('.gradient-copyPaste-toolbar')) {
+    const toolbar = document.createElement('div');
+    toolbar.className = 'gradient-copyPaste-toolbar';
+    toolbar.style.cssText = 'display:flex; gap:8px; margin-top:10px;';
+
+    const copyBtn = document.createElement('button');
+    copyBtn.type = 'button';
+    copyBtn.className = 'ghost gradient-copy-btn';
+    copyBtn.textContent = '⧉ Kopiuj gradient';
+    copyBtn.style.cssText = 'flex:1; font-size:12px; padding:6px 8px; margin:0;';
+
+    const pasteBtn = document.createElement('button');
+    pasteBtn.type = 'button';
+    pasteBtn.className = 'ghost gradient-paste-btn';
+    pasteBtn.textContent = '📋 Wklej gradient';
+    pasteBtn.style.cssText = 'flex:1; font-size:12px; padding:6px 8px; margin:0;';
+
+    toolbar.appendChild(copyBtn);
+    toolbar.appendChild(pasteBtn);
+    rootEl.appendChild(toolbar);
+
+    copyBtn.addEventListener('click', () => {
+      const typeSel = findTypeSelect();
+      window.gradientClipboard = {
+        stops: stops.map(s => ({ pos: s.pos, color: s.color })),
+        angle,
+        gradType: typeSel ? typeSel.value : 'linear'
+      };
+      const original = copyBtn.textContent;
+      copyBtn.textContent = '✓ Skopiowano';
+      setTimeout(() => { copyBtn.textContent = original; }, 1200);
+    });
+
+    pasteBtn.addEventListener('click', () => {
+      if (!window.gradientClipboard) { alert('Najpierw skopiuj jakiś gradient przyciskiem "Kopiuj gradient".'); return; }
+      const clip = window.gradientClipboard;
+      stops = clip.stops.map(s => ({ pos: s.pos, color: s.color, _id: 'gs' + (gradientStopIdCounter++) }));
+      selectedId = stops[0]._id;
+      if (clip.angle !== undefined && angleInput) {
+        angle = clip.angle; angleInput.value = angle; if (angleVal) angleVal.textContent = angle;
+      }
+      const typeSel = findTypeSelect();
+      if (typeSel && clip.gradType) {
+        typeSel.value = clip.gradType;
+        typeSel.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      render();
+      const original = pasteBtn.textContent;
+      pasteBtn.textContent = '✓ Wklejono';
+      setTimeout(() => { pasteBtn.textContent = original; }, 1200);
+    });
+  }
+
   return {
     getStops: () => { sortStops(); return stops.map(s => ({ pos: s.pos, color: s.color })); },
     getAngle: () => angle,
@@ -5519,13 +5684,18 @@ function finalizeCanvas(targetCtx, w, h, imgData, settings) {
     targetCtx.save();
     const pad = w * 0.02;
     const x = pad, y = pad, width = w - pad * 2, height = h - pad * 2;
-    const radius = w * 0.22;
+    const rawRadius = (settings.bgRounding !== null && settings.bgRounding !== undefined) ? settings.bgRounding : w * 0.22;
+    const radius = Math.max(0, Math.min(rawRadius, Math.min(width, height) / 2));
     targetCtx.beginPath();
     if (targetCtx.roundRect) targetCtx.roundRect(x, y, width, height, radius);
     else targetCtx.rect(x, y, width, height);
 
-    if (settings.bgOpacity > 0 && settings.bgStops && settings.bgStops.length) {
+    const bgIsSolid = settings.bgFillType === 'solid';
+    if (settings.bgOpacity > 0 && (bgIsSolid ? settings.bgColorA : (settings.bgStops && settings.bgStops.length))) {
     targetCtx.globalAlpha = settings.bgOpacity / 100;
+    if (bgIsSolid) {
+      targetCtx.fillStyle = settings.bgColorA;
+    } else {
     let grad;
     const r = Math.max(width, height) / 2;
     const cx = x + width/2, cy = y + height/2;
@@ -5537,12 +5707,17 @@ function finalizeCanvas(targetCtx, w, h, imgData, settings) {
     }
     settings.bgStops.forEach(s => grad.addColorStop(Math.max(0, Math.min(1, s.pos/100)), s.color));
     targetCtx.fillStyle = grad;
+    }
     targetCtx.fill();
   }
   
-  if (settings.bgStyle === 'outlined' && settings.bgBorderOpacity > 0 && settings.bgBorderStops && settings.bgBorderStops.length) {
+  const borderIsSolid = settings.bgBorderFillType === 'solid';
+  if (settings.bgStyle === 'outlined' && settings.bgBorderOpacity > 0 && (borderIsSolid ? settings.bgBorderColor : (settings.bgBorderStops && settings.bgBorderStops.length))) {
     targetCtx.globalAlpha = settings.bgBorderOpacity / 100;
     targetCtx.lineWidth = w * 0.04;
+    if (borderIsSolid) {
+      targetCtx.strokeStyle = settings.bgBorderColor;
+    } else {
     let grad;
     const r = Math.max(width, height) / 2;
     const cx = x + width/2, cy = y + height/2;
@@ -5554,6 +5729,7 @@ function finalizeCanvas(targetCtx, w, h, imgData, settings) {
     }
     settings.bgBorderStops.forEach(s => grad.addColorStop(Math.max(0, Math.min(1, s.pos/100)), s.color));
     targetCtx.strokeStyle = grad;
+    }
     targetCtx.stroke();
   }
     targetCtx.restore();
@@ -5583,7 +5759,7 @@ function bindPaneEvents(prefix, renderFn) {
     'OutlineToggle', 'OutlineColor', 'OutlineSize',
     'BgStyle', 'BgOpacity', 'BgBorderOpacity', 'BgColorA', 'BgColorB', 'BgBorder',
     'BgStyle', 'BgOpacity', 'BgBorderOpacity', 'BgColorA', 'BgColorB', 'BgBorder',
-    'BgFillType', 'BgOutlineToggle', 'FillStrength', 'BgRounding', 'GradientType', 'BgGradientType', 'BgBorderGradientType',
+    'BgFillType', 'BgBorderFillType', 'BgBorderColor', 'BgOutlineToggle', 'FillStrength', 'BgRounding', 'GradientType', 'BgGradientType', 'BgBorderGradientType',
     'InnerShadowToggle', 'InnerShadowColor', 'InnerShadowOpacity', 'InnerShadowBlur', 'InnerShadowX', 'InnerShadowY'
   ];
   ids.forEach(baseId => {
@@ -5597,7 +5773,7 @@ function bindPaneEvents(prefix, renderFn) {
       if (baseId === 'BgBorderOpacity' && document.getElementById(prefix + 'BgBorderOpacityVal')) 
         document.getElementById(prefix + 'BgBorderOpacityVal').textContent = el.value;
       if (baseId === 'FillStrength') document.getElementById(prefix + 'FillStrengthVal').textContent = el.value;
-      if (baseId === 'BgStyle' || baseId === 'BgFillType') updateBgUi(prefix);
+      if (baseId === 'BgStyle' || baseId === 'BgFillType' || baseId === 'BgBorderFillType') updateBgUi(prefix);
       if (baseId === 'BgRounding') document.getElementById(prefix + 'BgRoundingVal').textContent = el.value;
       if (baseId === 'InnerShadowOpacity') document.getElementById(prefix + 'InnerShadowOpacityVal').textContent = el.value;
       if (baseId === 'InnerShadowBlur') document.getElementById(prefix + 'InnerShadowBlurVal').textContent = el.value;
@@ -5618,8 +5794,13 @@ function getPaneSettings(prefix) {
     outlineColor: document.getElementById(prefix + 'OutlineColor').value,
     outlineSize: parseInt(document.getElementById(prefix + 'OutlineSize').value, 10),
     bgStyle: document.getElementById(prefix + 'BgStyle').value,
+    bgFillType: document.getElementById(prefix + 'BgFillType') ? document.getElementById(prefix + 'BgFillType').value : 'gradient',
+    bgColorA: document.getElementById(prefix + 'BgColorA') ? document.getElementById(prefix + 'BgColorA').value : '#3b3b3f',
+    bgBorderFillType: document.getElementById(prefix + 'BgBorderFillType') ? document.getElementById(prefix + 'BgBorderFillType').value : 'gradient',
+    bgBorderColor: document.getElementById(prefix + 'BgBorderColor') ? document.getElementById(prefix + 'BgBorderColor').value : '#ffffff',
     bgOpacity: parseInt(document.getElementById(prefix + 'BgOpacity').value, 10),
     bgBorderOpacity: parseInt(bgBorderOpEl ? bgBorderOpEl.value : 100, 10),
+    bgRounding: document.getElementById(prefix + 'BgRounding') ? parseInt(document.getElementById(prefix + 'BgRounding').value, 10) : null,
     bgStops: bgEd ? bgEd.getStops() : null,
     bgAngle: bgEd ? bgEd.getAngle() : 180,
     bgBorderStops: bgBorderEd ? bgBorderEd.getStops() : null,
@@ -6623,7 +6804,7 @@ function analyzeAndRender() {
 
 function renderImageSilhouette() {
   if (!sourceImage) return;
-  const maxDim = 800;
+  const maxDim = parseInt(document.getElementById('imageOutputSize')?.value, 10) || 800;
   const scale = Math.min(maxDim / sourceImage.width, maxDim / sourceImage.height, 1) || 1;
   const w = Math.max(1, Math.round(sourceImage.width * scale));
   const h = Math.max(1, Math.round(sourceImage.height * scale));
@@ -6694,6 +6875,7 @@ imageColor.addEventListener('input', renderImageSilhouette);
 bgTolerance.addEventListener('input', () => { bgToleranceVal.textContent = bgTolerance.value; renderImageSilhouette(); });
 document.getElementById('imageScale')?.addEventListener('input', () => { document.getElementById('imageScaleVal').textContent = document.getElementById('imageScale').value; renderImageSilhouette(); });
 document.getElementById('imageScale')?.addEventListener('input', () => { document.getElementById('imageScaleVal').textContent = document.getElementById('imageScale').value; renderImageSilhouette(); });
+document.getElementById('imageOutputSize')?.addEventListener('input', () => { document.getElementById('imageOutputSizeVal').textContent = document.getElementById('imageOutputSize').value; renderImageSilhouette(); });
   bindPaneEvents('image', renderImageSilhouette);
 
 imageDownload.addEventListener('click', () => { const link = document.createElement('a'); link.download = 'silhouette.png'; link.href = imageCanvas.toDataURL('image/png'); link.click(); });
@@ -6800,6 +6982,11 @@ batchEyedropperBtn.addEventListener('click', async () => {
   } catch (e) {}
 });
 
+document.getElementById('batchOutputSize').addEventListener('input', () => {
+  document.getElementById('batchOutputSizeVal').textContent = document.getElementById('batchOutputSize').value;
+  reprocessBatch();
+});
+
 function getGlobalBatchSettings() {
   const base = getPaneSettings('batch');
   return {
@@ -6817,7 +7004,7 @@ function effectiveSettingsFor(item) {
 
 function processBatchImage(item, bgTol) {
   const eff = effectiveSettingsFor(item);
-  const targetSize = 512;
+  const targetSize = parseInt(document.getElementById('batchOutputSize')?.value, 10) || 512;
   const w = targetSize;
   const h = targetSize;
 
@@ -11025,6 +11212,8 @@ document.getElementById('accountsTabBtn').addEventListener('click', renderAccoun
         bgBorderOpacity: getVal(prefix + 'BgBorderOpacity') || 100,
         bgColorA: getVal(prefix + 'BgColorA') || '#000000',
         bgBorder: getVal(prefix + 'BgBorder') || '#1e2e1e',
+        bgBorderFillType: getVal(prefix + 'BgBorderFillType') || 'gradient',
+        bgBorderColor: getVal(prefix + 'BgBorderColor') || '#ffffff',
         bgRounding: getVal(prefix + 'BgRounding') || 0,
         bgOutlineToggle: getChecked(prefix + 'BgOutlineToggle'),
         bgGradientType: getVal(prefix + 'BgGradientType') || 'linear',
@@ -11110,6 +11299,8 @@ document.getElementById('accountsTabBtn').addEventListener('click', renderAccoun
     setText(prefix + 'BgBorderOpacityVal', style.bgBorderOpacity);
     setInput(prefix + 'BgColorA', style.bgColorA);
     setInput(prefix + 'BgBorder', style.bgBorder);
+    setInput(prefix + 'BgBorderFillType', style.bgBorderFillType);
+    setInput(prefix + 'BgBorderColor', style.bgBorderColor);
     setInput(prefix + 'BgRounding', style.bgRounding);
     setText(prefix + 'BgRoundingVal', style.bgRounding);
     setInput(prefix + 'BgOutlineToggle', style.bgOutlineToggle, true);
@@ -20002,6 +20193,57 @@ if(fDz && fInp) {
   document.addEventListener('DOMContentLoaded', initDiskAndAssetButtons);
   setTimeout(initDiskAndAssetButtons, 500);
   setInterval(initDiskAndAssetButtons, 2000);
+
+  // --- Liczbowe pole obok każdego suwaka (range), żeby móc wpisać wartość ręcznie ---
+  function enhanceRangeSlider(range) {
+    if (range.dataset.numEnhanced) return;
+    range.dataset.numEnhanced = '1';
+
+    const num = document.createElement('input');
+    num.type = 'number';
+    num.className = 'range-num-input';
+    if (range.min !== '') num.min = range.min;
+    if (range.max !== '') num.max = range.max;
+    num.step = range.step || 1;
+    num.value = range.value;
+    num.style.cssText = 'width:62px; flex:none; margin:0; padding:6px 6px; font-size:12px; text-align:center; background:#0d1013; border:1px solid var(--panel-edge); border-radius:9px; color:var(--ink);';
+
+    // Owiń suwak i pole liczbowe wspólnym wierszem, zachowując miejsce w DOM
+    const wrap = document.createElement('div');
+    wrap.className = 'range-num-wrap';
+    wrap.style.cssText = 'display:flex; align-items:center; gap:8px; width:100%;';
+    range.parentElement.insertBefore(wrap, range);
+    range.style.flex = '1 1 auto';
+    range.style.minWidth = '0';
+    wrap.appendChild(range);
+    wrap.appendChild(num);
+
+    range.addEventListener('input', () => {
+      if (document.activeElement !== num) num.value = range.value;
+    });
+
+    num.addEventListener('input', () => {
+      let v = parseFloat(num.value);
+      if (isNaN(v)) return;
+      if (range.min !== '' && v < parseFloat(range.min)) v = parseFloat(range.min);
+      if (range.max !== '' && v > parseFloat(range.max)) v = parseFloat(range.max);
+      range.value = String(v);
+      range.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    num.addEventListener('change', () => {
+      range.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    // przy opuszczeniu pola dociągnij ew. przycięcie do min/max w widoku
+    num.addEventListener('blur', () => { num.value = range.value; });
+  }
+
+  function enhanceAllRangeSliders() {
+    document.querySelectorAll('input[type="range"]').forEach(enhanceRangeSlider);
+  }
+
+  document.addEventListener('DOMContentLoaded', enhanceAllRangeSliders);
+  setTimeout(enhanceAllRangeSliders, 500);
+  setInterval(enhanceAllRangeSliders, 1500);
 })();
 </script>
 
