@@ -2093,7 +2093,7 @@
     <p class="hint auth-footnote">Wpisz odpowiednie informacje logowania.</p>
   </div>
 </div>
-<div id="appVersionBadge" style="position:fixed; bottom:6px; right:8px; z-index:99998; font-size:10px; color:#666; opacity:0.55; pointer-events:none; font-family:monospace; user-select:none;">Wersja 44</div>
+<div id="appVersionBadge" style="position:fixed; bottom:6px; right:8px; z-index:99998; font-size:10px; color:#666; opacity:0.55; pointer-events:none; font-family:monospace; user-select:none;">Wersja 4.5</div>
 <div class="wrap">
   <div class="user-bar" id="userBar" style="display:none;">
     <div class="user-bar-info">
@@ -5135,7 +5135,7 @@ function applyPermissions() {
   const role = currentUser.role || 'user';
   const allowedTabs = ROLE_PERMISSIONS[role] || ROLE_PERMISSIONS.user;
 
-  document.querySelectorAll('.custom-nav-item').forEach(el => {
+  document.getElementById('customNavDropdown')?.querySelectorAll('.custom-nav-item').forEach(el => {
     const tabName = el.dataset.value;
     if (!tabName) return;
     el.style.display = allowedTabs.includes(tabName) ? '' : 'none';
@@ -5173,7 +5173,7 @@ function openTab(tabId) {
   if (targetPane) targetPane.classList.add('active');
 
   const navLabel = document.getElementById('customNavLabel');
-  document.querySelectorAll('.custom-nav-item').forEach(el => {
+  document.getElementById('customNavDropdown')?.querySelectorAll('.custom-nav-item').forEach(el => {
     el.classList.remove('active');
     if (el.dataset.value === tabId) {
       el.classList.add('active');
