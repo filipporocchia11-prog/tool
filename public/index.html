@@ -1393,7 +1393,8 @@
     touch-action: none !important;
   }
   #cnsSheetOverlay.show { display: flex !important; }
-  .custom-nav-dropdown.cns-sheet {
+  .custom-nav-dropdown.cns-sheet:not(.show) { display: none !important; }
+  .custom-nav-dropdown.cns-sheet.show {
     display: block !important;
     position: relative !important;
     top: auto !important; left: auto !important; right: auto !important;
