@@ -1380,6 +1380,36 @@
   }
   .custom-nav-dropdown.show { display: block; animation: slideDown 0.2s ease-out; }
   @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Dokowany do dołu ekranu wariant dropdownów (zamiast liczenia pozycji pod przyciskiem) */
+  #cnsSheetOverlay {
+    display: none;
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0,0,0,0.85) !important;
+    z-index: 100000 !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    touch-action: none !important;
+  }
+  #cnsSheetOverlay.show { display: flex !important; }
+  .custom-nav-dropdown.cns-sheet {
+    display: block !important;
+    position: relative !important;
+    top: auto !important; left: auto !important; right: auto !important;
+    width: 100% !important;
+    max-width: 480px !important;
+    max-height: 72vh !important;
+    margin: 0 auto !important;
+    border-radius: 18px 18px 0 0 !important;
+    border: 1px solid var(--accent-dim) !important;
+    border-bottom: none !important;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.8) !important;
+    padding: 8px 0 24px !important;
+    box-sizing: border-box !important;
+    animation: slideUpSheet 0.2s ease-out !important;
+  }
+  @keyframes slideUpSheet { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
   .custom-nav-group {
     color: var(--ink-dim); font-weight: 700; font-size: 11px; text-transform: uppercase;
     letter-spacing: 1px; padding: 14px 16px 4px; border-top: 1px solid var(--panel-edge);
@@ -10440,6 +10470,54 @@ document.getElementById('ftCustomLayout')?.addEventListener('input', renderFancy
 document.getElementById('ftSingleText')?.addEventListener('change', renderFancyText);
 document.getElementById('ftLowercase')?.addEventListener('change', renderFancyText);
 
+// Dokujące się u dołu ekranu dropdowny (custom-nav-dropdown) — zamiast liczenia
+// dokładnej pozycji pod przyciskiem (za dużo zmiennych na mobile, rozjeżdżało się),
+// ten sam sprawdzony patent co przy kółku "+Dodaj obiekt": pełnoekranowy overlay
+// z menu zadokowanym na dole.
+let cnsActiveSheet = null;
+
+function getCnsSheetOverlay() {
+  let overlay = document.getElementById('cnsSheetOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'cnsSheetOverlay';
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeCnsSheet();
+    });
+  }
+  return overlay;
+}
+
+function closeCnsSheet() {
+  const overlay = document.getElementById('cnsSheetOverlay');
+  if (overlay) overlay.classList.remove('show');
+  if (cnsActiveSheet) {
+    cnsActiveSheet.dropdown.classList.remove('show');
+    cnsActiveSheet.toggle.classList.remove('open');
+    cnsActiveSheet = null;
+  }
+}
+
+function openCnsSheet(dropdown, toggle) {
+  document.querySelectorAll('.custom-nav-dropdown.show').forEach(d => { if (d !== dropdown) d.classList.remove('show'); });
+  document.querySelectorAll('.custom-nav-button.open').forEach(b => { if (b !== toggle) b.classList.remove('open'); });
+  const overlay = getCnsSheetOverlay();
+  dropdown.classList.remove('custom-nav-portal');
+  dropdown.style.position = '';
+  dropdown.style.left = '';
+  dropdown.style.top = '';
+  dropdown.style.width = '';
+  dropdown.style.maxHeight = '';
+  dropdown.style.margin = '';
+  dropdown.classList.add('cns-sheet');
+  overlay.appendChild(dropdown);
+  overlay.classList.add('show');
+  dropdown.classList.add('show');
+  toggle.classList.add('open');
+  cnsActiveSheet = { dropdown, toggle };
+}
+
 function initCustomSelectUI(selectId, wrapperId, toggleId, dropdownId, labelId) {
   const select = document.getElementById(selectId);
   const wrapper = document.getElementById(wrapperId);
@@ -10457,33 +10535,12 @@ function initCustomSelectUI(selectId, wrapperId, toggleId, dropdownId, labelId) 
   };
   syncLabel();
 
-  const closeDropdown = () => {
-    dropdown.classList.remove('show');
-    toggle.classList.remove('open');
-  };
-
-  const openDropdown = () => {
-    const r = toggle.getBoundingClientRect();
-    dropdown.classList.add('custom-nav-portal');
-    dropdown.style.position = 'fixed';
-    dropdown.style.margin = '0';
-    document.body.appendChild(dropdown);
-    const menuW = Math.max(r.width, 170);
-    let left = r.left;
-    if (left + menuW > window.innerWidth - 8) left = Math.max(8, window.innerWidth - 8 - menuW);
-    let top = r.bottom + 4;
-    dropdown.style.left = left + 'px';
-    dropdown.style.top = top + 'px';
-    dropdown.style.width = menuW + 'px';
-    dropdown.style.maxHeight = Math.max(120, window.innerHeight - top - 8) + 'px';
-    dropdown.classList.add('show');
-    toggle.classList.add('open');
-  };
+  const closeDropdown = () => closeCnsSheet();
+  const openDropdown = () => openCnsSheet(dropdown, toggle);
 
   toggle.addEventListener('click', (e) => {
     e.stopPropagation();
     const opening = !dropdown.classList.contains('show');
-    document.querySelectorAll('.custom-nav-dropdown.show').forEach(d => { if (d !== dropdown) { d.classList.remove('show'); } });
     if (opening) openDropdown(); else closeDropdown();
   });
 
@@ -10561,33 +10618,12 @@ function autoCustomSelect(selectId) {
     });
   }
 
-  function closeDropdown() {
-    dropdown.classList.remove('show');
-    toggle.classList.remove('open');
-  }
-
-  function openDropdown() {
-    const r = toggle.getBoundingClientRect();
-    dropdown.classList.add('custom-nav-portal');
-    dropdown.style.position = 'fixed';
-    dropdown.style.margin = '0';
-    document.body.appendChild(dropdown);
-    const menuW = Math.max(r.width, 170);
-    let left = r.left;
-    if (left + menuW > window.innerWidth - 8) left = Math.max(8, window.innerWidth - 8 - menuW);
-    let top = r.bottom + 4;
-    dropdown.style.left = left + 'px';
-    dropdown.style.top = top + 'px';
-    dropdown.style.width = menuW + 'px';
-    dropdown.style.maxHeight = Math.max(120, window.innerHeight - top - 8) + 'px';
-    dropdown.classList.add('show');
-    toggle.classList.add('open');
-  }
+  function closeDropdown() { closeCnsSheet(); }
+  function openDropdown() { openCnsSheet(dropdown, toggle); }
 
   toggle.addEventListener('click', (e) => {
     e.stopPropagation();
     const opening = !dropdown.classList.contains('show');
-    document.querySelectorAll('.custom-nav-dropdown.show').forEach(d => { if (d !== dropdown) d.classList.remove('show'); });
     if (opening) openDropdown(); else closeDropdown();
   });
 
