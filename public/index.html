@@ -2063,6 +2063,7 @@
     <p class="hint auth-footnote">Wpisz odpowiednie informacje logowania.</p>
   </div>
 </div>
+<div id="appVersionBadge" style="position:fixed; bottom:6px; right:8px; z-index:99998; font-size:10px; color:#666; opacity:0.55; pointer-events:none; font-family:monospace; user-select:none;">Wersja 44</div>
 <div class="wrap">
   <div class="user-bar" id="userBar" style="display:none;">
     <div class="user-bar-info">
@@ -10503,6 +10504,110 @@ function initCustomSelectUI(selectId, wrapperId, toggleId, dropdownId, labelId) 
   });
 }
 initCustomSelectUI('ftStyle', 'ftStyleWrapper', 'ftStyleToggle', 'ftStyleDropdown', 'ftStyleLabel');
+
+function autoCustomSelect(selectId) {
+  const select = document.getElementById(selectId);
+  if (!select || select.dataset.customized) return;
+  select.dataset.customized = '1';
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'custom-nav-wrapper';
+  wrapper.style.position = 'relative';
+  const inlineFlex = select.style.flex, inlineWidth = select.style.width, inlineMaxW = select.style.maxWidth, inlineFont = select.style.fontSize;
+  wrapper.style.flex = inlineFlex || '1';
+  if (inlineWidth) wrapper.style.width = inlineWidth;
+  if (inlineMaxW) wrapper.style.maxWidth = inlineMaxW;
+
+  const toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.className = 'custom-nav-button';
+  if (inlineFont) toggle.style.fontSize = inlineFont;
+  toggle.innerHTML = '<span class="cns-label"></span><svg fill="currentColor" height="16" viewBox="0 0 24 24" width="16" style="flex:none;"><path d="M7 10l5 5 5-5z"/></svg>';
+  const label = toggle.querySelector('.cns-label');
+
+  const dropdown = document.createElement('div');
+  dropdown.className = 'custom-nav-dropdown';
+
+  select.style.display = 'none';
+  select.parentNode.insertBefore(wrapper, select.nextSibling);
+  wrapper.appendChild(toggle);
+  wrapper.appendChild(dropdown);
+
+  function syncLabel() {
+    const opt = select.options[select.selectedIndex];
+    label.textContent = opt ? opt.textContent : '';
+    dropdown.querySelectorAll('.custom-nav-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.value === select.value);
+    });
+  }
+
+  function rebuildItems() {
+    dropdown.innerHTML = '';
+    Array.from(select.options).forEach(opt => {
+      const item = document.createElement('div');
+      item.className = 'custom-nav-item' + (opt.value === select.value ? ' active' : '');
+      item.dataset.value = opt.value;
+      item.textContent = opt.textContent;
+      const optStyle = opt.getAttribute('style');
+      if (optStyle) item.setAttribute('style', item.getAttribute('style') ? item.getAttribute('style') + ';' + optStyle : optStyle);
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        select.value = opt.value;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        syncLabel();
+        closeDropdown();
+      });
+      dropdown.appendChild(item);
+    });
+  }
+
+  function closeDropdown() {
+    dropdown.classList.remove('show');
+    toggle.classList.remove('open');
+  }
+
+  function openDropdown() {
+    const r = toggle.getBoundingClientRect();
+    dropdown.classList.add('custom-nav-portal');
+    dropdown.style.position = 'fixed';
+    dropdown.style.margin = '0';
+    document.body.appendChild(dropdown);
+    const menuW = Math.max(r.width, 170);
+    let left = r.left;
+    if (left + menuW > window.innerWidth - 8) left = Math.max(8, window.innerWidth - 8 - menuW);
+    let top = r.bottom + 4;
+    dropdown.style.left = left + 'px';
+    dropdown.style.top = top + 'px';
+    dropdown.style.width = menuW + 'px';
+    dropdown.style.maxHeight = Math.max(120, window.innerHeight - top - 8) + 'px';
+    dropdown.classList.add('show');
+    toggle.classList.add('open');
+  }
+
+  toggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const opening = !dropdown.classList.contains('show');
+    document.querySelectorAll('.custom-nav-dropdown.show').forEach(d => { if (d !== dropdown) d.classList.remove('show'); });
+    if (opening) openDropdown(); else closeDropdown();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!wrapper.contains(e.target) && !dropdown.contains(e.target)) closeDropdown();
+  });
+
+  select.addEventListener('change', syncLabel);
+  new MutationObserver(() => { rebuildItems(); syncLabel(); }).observe(select, { childList: true });
+
+  rebuildItems();
+  syncLabel();
+}
+
+[
+  'bgMode', 'patternMode', 'f_patTargetImg', 'f_font', 'f_fxType', 'f_glowBlendMode', 'f_shadowBlendMode',
+  'f_mirrorRef', 'newEntranceType', 'newLoopType', 'newExitType', 'dhSendMode', 'dhSavedBotsSelect',
+  'dhGuildSelect', 'dhChannelSelect', 'dhWebhookChoiceSelect', 'wmStyle', 'wmFont', 'wmMode', 'ftLayout',
+  'cm_p_parentKey', 'newAccRole'
+].forEach(autoCustomSelect);
 
 document.getElementById('ftEmojiSearch')?.addEventListener('input', ftRenderEmojiPicker);
 
