@@ -2055,6 +2055,9 @@
     <input type="text" id="authUser" autocomplete="username" placeholder="np. flajp">
     <label for="authPass" style="margin-top:14px;">Hasło</label>
     <input type="password" id="authPass" autocomplete="current-password" placeholder="••••••••">
+    <label style="margin-top:14px; display:flex; align-items:center; gap:8px; font-weight:400; cursor:pointer;">
+      <input type="checkbox" id="authRemember" checked style="width:auto; margin:0;"> Zapamiętaj mnie
+    </label>
     <p class="auth-error" id="authError"></p>
     <button class="primary" id="authLoginBtn" style="margin-top:6px;width:100%;">Zaloguj</button>
     <p class="hint auth-footnote">Wpisz odpowiednie informacje logowania.</p>
@@ -5180,7 +5183,7 @@ document.addEventListener('DOMContentLoaded', () => {
       navToggle.classList.toggle('open');
     });
 
-    document.querySelectorAll('.custom-nav-item').forEach(item => {
+    navDropdown.querySelectorAll('.custom-nav-item').forEach(item => {
       item.addEventListener('click', () => {
         openTab(item.dataset.value);
         navDropdown.classList.remove('show');
@@ -10453,26 +10456,49 @@ function initCustomSelectUI(selectId, wrapperId, toggleId, dropdownId, labelId) 
   };
   syncLabel();
 
+  const closeDropdown = () => {
+    dropdown.classList.remove('show');
+    toggle.classList.remove('open');
+  };
+
+  const openDropdown = () => {
+    const r = toggle.getBoundingClientRect();
+    dropdown.classList.add('custom-nav-portal');
+    dropdown.style.position = 'fixed';
+    dropdown.style.margin = '0';
+    document.body.appendChild(dropdown);
+    const menuW = Math.max(r.width, 170);
+    let left = r.left;
+    if (left + menuW > window.innerWidth - 8) left = Math.max(8, window.innerWidth - 8 - menuW);
+    let top = r.bottom + 4;
+    dropdown.style.left = left + 'px';
+    dropdown.style.top = top + 'px';
+    dropdown.style.width = menuW + 'px';
+    dropdown.style.maxHeight = Math.max(120, window.innerHeight - top - 8) + 'px';
+    dropdown.classList.add('show');
+    toggle.classList.add('open');
+  };
+
   toggle.addEventListener('click', (e) => {
     e.stopPropagation();
-    dropdown.classList.toggle('show');
-    toggle.classList.toggle('open');
+    const opening = !dropdown.classList.contains('show');
+    document.querySelectorAll('.custom-nav-dropdown.show').forEach(d => { if (d !== dropdown) { d.classList.remove('show'); } });
+    if (opening) openDropdown(); else closeDropdown();
   });
 
   dropdown.querySelectorAll('.custom-nav-item').forEach(item => {
-    item.addEventListener('click', () => {
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
       select.value = item.dataset.value;
       select.dispatchEvent(new Event('change', { bubbles: true }));
       syncLabel();
-      dropdown.classList.remove('show');
-      toggle.classList.remove('open');
+      closeDropdown();
     });
   });
 
   document.addEventListener('click', (e) => {
-    if (!wrapper.contains(e.target)) {
-      dropdown.classList.remove('show');
-      toggle.classList.remove('open');
+    if (!wrapper.contains(e.target) && !dropdown.contains(e.target)) {
+      closeDropdown();
     }
   });
 }
@@ -11068,11 +11094,11 @@ async function api(path, opts = {}) {
   return data;
 }
 
-async function attemptLogin(username, password) {
+async function attemptLogin(username, password, remember) {
   const errEl = document.getElementById('authError');
   errEl.textContent = '';
   try {
-    const data = await api('/api/login', { method: 'POST', body: JSON.stringify({ username, password }) });
+    const data = await api('/api/login', { method: 'POST', body: JSON.stringify({ username, password, remember: !!remember }) });
     currentUser = data; window.currentUser = data; enterApp();
   } catch (e) {
     errEl.textContent = e.message;
@@ -11232,7 +11258,7 @@ document.getElementById('clearLogsBtn').addEventListener('click', async () => {
 });
 
 document.getElementById('authLoginBtn').addEventListener('click', () => {
-  attemptLogin(document.getElementById('authUser').value.trim(), document.getElementById('authPass').value);
+  attemptLogin(document.getElementById('authUser').value.trim(), document.getElementById('authPass').value, document.getElementById('authRemember').checked);
 });
 ['authUser', 'authPass'].forEach(id => {
   document.getElementById(id).addEventListener('keydown', e => {
