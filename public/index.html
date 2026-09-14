@@ -18573,22 +18573,31 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       fc.setLineDash([]);
     } else if(fx.type === 'lunar'){
-      fc.fillStyle = col2;
+      // Sferyczny gradient światła zamiast płaskiego tła — żeby wyglądało
+      // jak kula, a nie płaska plansza z kropkami.
+      const lcx = w * 0.32, lcy = h * 0.32;
+      const sphereGrad = fc.createRadialGradient(lcx, lcy, 0, lcx, lcy, Math.max(w, h) * 1.05);
+      sphereGrad.addColorStop(0, col1);
+      sphereGrad.addColorStop(1, col2);
+      fc.fillStyle = sphereGrad;
       fc.fillRect(0, 0, w, h);
-      const craterCount = Math.max(12, Math.round(intensity * 0.8));
+
+      // Lepszy generator pozycji niż zwykłe modulo (które grupowało kratery
+      // w widoczne, sztuczne rzędy) + miękkie kratery bez twardej obwódki.
+      const hash2 = (a, b) => { const s = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453; return s - Math.floor(s); };
+      const craterCount = Math.min(40, Math.max(6, Math.round(intensity * 0.25)));
       for(let i = 0; i < craterCount; i++){
-        const cx = ((i * 389) % w);
-        const cy = ((i * 701) % h);
-        const cr = Math.max(3, ((i * 131) % Math.round(scale)));
-        fc.save();
+        const cx2 = hash2(i * 17.32, 41.7) * w;
+        const cy2 = hash2(i * 71.22, 13.9) * h;
+        const cr = Math.max(4, scale * (0.3 + hash2(i * 5.2, 91.6) * 0.5));
+        const g2 = fc.createRadialGradient(cx2, cy2, 0, cx2, cy2, cr);
+        g2.addColorStop(0, 'rgba(0,0,0,0.4)');
+        g2.addColorStop(0.75, 'rgba(0,0,0,0.2)');
+        g2.addColorStop(1, 'rgba(0,0,0,0)');
+        fc.fillStyle = g2;
         fc.beginPath();
-        fc.arc(cx, cy, cr, 0, Math.PI * 2);
-        fc.fillStyle = 'rgba(0,0,0,0.45)';
+        fc.arc(cx2, cy2, cr, 0, Math.PI * 2);
         fc.fill();
-        fc.lineWidth = Math.max(1, cr * 0.25);
-        fc.strokeStyle = col1;
-        fc.stroke();
-        fc.restore();
       }
     } else if(fx.type === 'glitch'){
       const split = Math.max(2, Math.round(intensity * 0.25));
