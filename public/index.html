@@ -2277,7 +2277,23 @@
         <div class="row" id="rolesStyleRow" style="display:none;">
           <div class="field">
             <label for="rolesStyleType">Rodzaj stylu</label>
-            <select id="rolesStyleType"><option value="fire">🔥 Ogień</option><option value="water">💧 Woda</option><option value="honeycomb">🍯 Plaster miodu</option></select>
+            <select id="rolesStyleType">
+              <option value="fire">🔥 Ogień</option>
+              <option value="water">💧 Woda</option>
+              <option value="honeycomb">🍯 Plaster miodu</option>
+              <option value="electric">⚡ Elektryczność</option>
+              <option value="galaxy">🌌 Galaktyka</option>
+              <option value="wood">🪵 Drewno</option>
+              <option value="carbon">⬛ Karbon</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="rolesStyleColor1">Kolor 1</label>
+            <input type="color" id="rolesStyleColor1" value="#661400">
+          </div>
+          <div class="field">
+            <label for="rolesStyleColor2">Kolor 2</label>
+            <input type="color" id="rolesStyleColor2" value="#ffd479">
           </div>
         </div>
 
@@ -2527,7 +2543,23 @@
         <div class="row" id="imageStyleRow" style="display:none;">
           <div class="field">
             <label for="imageStyleType">Rodzaj stylu</label>
-            <select id="imageStyleType"><option value="fire">🔥 Ogień</option><option value="water">💧 Woda</option><option value="honeycomb">🍯 Plaster miodu</option></select>
+            <select id="imageStyleType">
+              <option value="fire">🔥 Ogień</option>
+              <option value="water">💧 Woda</option>
+              <option value="honeycomb">🍯 Plaster miodu</option>
+              <option value="electric">⚡ Elektryczność</option>
+              <option value="galaxy">🌌 Galaktyka</option>
+              <option value="wood">🪵 Drewno</option>
+              <option value="carbon">⬛ Karbon</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="imageStyleColor1">Kolor 1</label>
+            <input type="color" id="imageStyleColor1" value="#661400">
+          </div>
+          <div class="field">
+            <label for="imageStyleColor2">Kolor 2</label>
+            <input type="color" id="imageStyleColor2" value="#ffd479">
           </div>
         </div>
 
@@ -2771,7 +2803,23 @@
         <div class="row" id="emojiStyleRow" style="display:none;">
           <div class="field">
             <label for="emojiStyleType">Rodzaj stylu</label>
-            <select id="emojiStyleType"><option value="fire">🔥 Ogień</option><option value="water">💧 Woda</option><option value="honeycomb">🍯 Plaster miodu</option></select>
+            <select id="emojiStyleType">
+              <option value="fire">🔥 Ogień</option>
+              <option value="water">💧 Woda</option>
+              <option value="honeycomb">🍯 Plaster miodu</option>
+              <option value="electric">⚡ Elektryczność</option>
+              <option value="galaxy">🌌 Galaktyka</option>
+              <option value="wood">🪵 Drewno</option>
+              <option value="carbon">⬛ Karbon</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="emojiStyleColor1">Kolor 1</label>
+            <input type="color" id="emojiStyleColor1" value="#661400">
+          </div>
+          <div class="field">
+            <label for="emojiStyleColor2">Kolor 2</label>
+            <input type="color" id="emojiStyleColor2" value="#ffd479">
           </div>
         </div>
 
@@ -3043,7 +3091,23 @@
         <div class="row" id="batchStyleRow" style="display:none;">
           <div class="field">
             <label for="batchStyleType">Rodzaj stylu</label>
-            <select id="batchStyleType"><option value="fire">🔥 Ogień</option><option value="water">💧 Woda</option><option value="honeycomb">🍯 Plaster miodu</option></select>
+            <select id="batchStyleType">
+              <option value="fire">🔥 Ogień</option>
+              <option value="water">💧 Woda</option>
+              <option value="honeycomb">🍯 Plaster miodu</option>
+              <option value="electric">⚡ Elektryczność</option>
+              <option value="galaxy">🌌 Galaktyka</option>
+              <option value="wood">🪵 Drewno</option>
+              <option value="carbon">⬛ Karbon</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="batchStyleColor1">Kolor 1</label>
+            <input type="color" id="batchStyleColor1" value="#661400">
+          </div>
+          <div class="field">
+            <label for="batchStyleColor2">Kolor 2</label>
+            <input type="color" id="batchStyleColor2" value="#ffd479">
           </div>
         </div>
 
@@ -3089,12 +3153,94 @@
             </label>
           </div>
           <div class="field">
+            <label for="batchOutlineSize">Grubość: <span id="batchOutlineSizeVal">3</span>px</label>
+            <input type="range" id="batchOutlineSize" min="1" max="20" step="1" value="3">
+          </div>
+          <div class="field">
+            <label for="batchOutlineFillType">Wypełnienie krawędzi</label>
+            <select id="batchOutlineFillType">
+              <option value="solid">Jednolity kolor</option>
+              <option value="gradient">Gradient</option>
+            </select>
+          </div>
+        </div>
+        <div id="batchOutlineSolidWrap" style="margin-top:10px;">
+          <div class="field">
             <label for="batchOutlineColor">Kolor krawędzi</label>
             <input type="color" id="batchOutlineColor" value="#ffffff">
           </div>
+        </div>
+        <div class="gradient-editor" id="batchOutlineGradientEditor" style="display:none; margin-top:10px;">
+          <button type="button" class="ghost gradient-add-btn">+ Dodaj odcień</button>
+          <div class="gradient-bar-wrap">
+            <div class="gradient-bar"></div>
+          </div>
+          <div class="gradient-stop-controls"></div>
+          <div class="field" style="margin-top:10px; display:flex; gap:10px; align-items:center;">
+            <div style="flex:1;">
+              <label for="batchOutlineGradientType">Typ gradientu</label>
+              <select id="batchOutlineGradientType" style="padding:8px 10px; font-size:12px; margin:0;">
+                <option value="linear">Liniowy</option>
+                <option value="radial">Radialny (Od środka)</option>
+              </select>
+            </div>
+            <div style="flex:1;">
+              <label for="batchOutlineGradientAngle">Kąt: <span id="batchOutlineAngleVal">180</span>&deg;</label>
+              <input type="range" id="batchOutlineGradientAngle" class="gradient-angle-input" min="0" max="360" step="5" value="180" style="margin:0;">
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <label>Wewnętrzna krawędź</label>
+        <div class="row" style="margin-top:12px;">
           <div class="field">
-            <label for="batchOutlineSize">Grubość: <span id="batchOutlineSizeVal">3</span>px</label>
-            <input type="range" id="batchOutlineSize" min="1" max="20" step="1" value="3">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <input type="checkbox" id="batchInnerOutlineToggle" style="width:auto;">
+              Włącz wewnętrzną krawędź
+            </label>
+          </div>
+          <div class="field">
+            <label for="batchInnerOutlineSize">Grubość: <span id="batchInnerOutlineSizeVal">3</span>px</label>
+            <input type="range" id="batchInnerOutlineSize" min="1" max="40" step="1" value="3">
+          </div>
+          <div class="field">
+            <label for="batchInnerOutlineFillType">Wypełnienie krawędzi</label>
+            <select id="batchInnerOutlineFillType">
+              <option value="solid">Jednolity kolor</option>
+              <option value="gradient">Gradient</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="batchInnerOutlineBlur">Rozmycie: <span id="batchInnerOutlineBlurVal">0</span>px</label>
+            <input type="range" id="batchInnerOutlineBlur" min="0" max="20" step="0.5" value="0">
+          </div>
+        </div>
+        <div id="batchInnerOutlineSolidWrap" style="margin-top:10px;">
+          <div class="field">
+            <label for="batchInnerOutlineColor">Kolor krawędzi</label>
+            <input type="color" id="batchInnerOutlineColor" value="#000000">
+          </div>
+        </div>
+        <div class="gradient-editor" id="batchInnerOutlineGradientEditor" style="display:none; margin-top:10px;">
+          <button type="button" class="ghost gradient-add-btn">+ Dodaj odcień</button>
+          <div class="gradient-bar-wrap">
+            <div class="gradient-bar"></div>
+          </div>
+          <div class="gradient-stop-controls"></div>
+          <div class="field" style="margin-top:10px; display:flex; gap:10px; align-items:center;">
+            <div style="flex:1;">
+              <label for="batchInnerOutlineGradientType">Typ gradientu</label>
+              <select id="batchInnerOutlineGradientType" style="padding:8px 10px; font-size:12px; margin:0;">
+                <option value="linear">Liniowy</option>
+                <option value="radial">Radialny (Od środka)</option>
+              </select>
+            </div>
+            <div style="flex:1;">
+              <label for="batchInnerOutlineGradientAngle">Kąt: <span id="batchInnerOutlineAngleVal">180</span>&deg;</label>
+              <input type="range" id="batchInnerOutlineGradientAngle" class="gradient-angle-input" min="0" max="360" step="5" value="180" style="margin:0;">
+            </div>
           </div>
         </div>
 
@@ -3121,6 +3267,10 @@
           <div class="field">
             <label for="batchBgRounding">Zaokrąglenie rogów (Tło i ramka): <span id="batchBgRoundingVal">45</span>px</label>
             <input type="range" id="batchBgRounding" min="0" max="500" step="1" value="45">
+          </div>
+          <div class="field">
+            <label for="batchBgEdgePadding">Odstęp tła/ramki od krawędzi: <span id="batchBgEdgePaddingVal">2</span>%</label>
+            <input type="range" id="batchBgEdgePadding" min="0" max="25" step="0.5" value="2">
           </div>
         </div>
         <div class="row" id="batchBgColors" style="display:none; margin-top:6px; flex-direction:column; gap:10px;">
@@ -5346,10 +5496,10 @@ wireFillToggle('roles', mode => {
   renderRoleIcon();
 });
 
-document.getElementById('emojiStyleType')?.addEventListener('change', renderEmojiSilhouette);
-document.getElementById('imageStyleType')?.addEventListener('change', renderImageSilhouette);
-document.getElementById('batchStyleType')?.addEventListener('change', reprocessBatch);
-document.getElementById('rolesStyleType')?.addEventListener('change', renderRoleIcon);
+document.getElementById('emojiStyleType')?.addEventListener('change', (e) => { applyStyleDefaultColors('emoji', e.target.value); renderEmojiSilhouette(); });
+document.getElementById('imageStyleType')?.addEventListener('change', (e) => { applyStyleDefaultColors('image', e.target.value); renderImageSilhouette(); });
+document.getElementById('batchStyleType')?.addEventListener('change', (e) => { applyStyleDefaultColors('batch', e.target.value); reprocessBatch(); });
+document.getElementById('rolesStyleType')?.addEventListener('change', (e) => { applyStyleDefaultColors('roles', e.target.value); renderRoleIcon(); });
 
 function hexToRgb(hex) {
   const v = hex.replace('#', '');
@@ -5660,52 +5810,56 @@ function buildGradientLookup(w, h, stops, angleDeg, type = 'linear', bounds = nu
   return ctx.getImageData(0, 0, w, h).data;
 }
 
-function buildFireLookup(w, h, bounds) {
+function buildFireLookup(w, h, bounds, color1, color2) {
   const buf = new Uint8ClampedArray(w * h * 4);
   const by = bounds ? bounds.y : 0, bh = bounds ? bounds.h : h;
+  const c1 = hexToRgb(color1 || '#661400');
+  const c2 = hexToRgb(color2 || '#ffd479');
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       const ty = bh > 0 ? (y - by) / bh : 0;
       const flicker = Math.sin(x * 0.5 + y * 0.15) * 0.07 + Math.sin(x * 0.13 - y * 0.31) * 0.05;
       const t = Math.min(1, Math.max(0, (1 - ty) + flicker));
-      let r, g, b;
-      if (t > 0.66) { const k = (t - 0.66) / 0.34; r = 255; g = Math.round(200 + 55 * k); b = Math.round(90 * k); }
-      else if (t > 0.33) { const k = (t - 0.33) / 0.33; r = 255; g = Math.round(90 + 110 * k); b = 0; }
-      else { const k = t / 0.33; r = Math.round(120 + 135 * k); g = Math.round(20 + 70 * k); b = 0; }
       const i = (y * w + x) * 4;
-      buf[i] = r; buf[i + 1] = g; buf[i + 2] = b; buf[i + 3] = 255;
+      buf[i] = Math.round(c1.r + (c2.r - c1.r) * t);
+      buf[i + 1] = Math.round(c1.g + (c2.g - c1.g) * t);
+      buf[i + 2] = Math.round(c1.b + (c2.b - c1.b) * t);
+      buf[i + 3] = 255;
     }
   }
   return buf;
 }
 
-function buildWaterLookup(w, h, bounds) {
+function buildWaterLookup(w, h, bounds, color1, color2) {
   const buf = new Uint8ClampedArray(w * h * 4);
   const by = bounds ? bounds.y : 0, bh = bounds ? bounds.h : h;
+  const c1 = hexToRgb(color1 || '#0a2d4d');
+  const c2 = hexToRgb(color2 || '#8fd8ff');
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       const ty = bh > 0 ? (y - by) / bh : 0;
       const wave = Math.sin(x * 0.15 + y * 0.05) * 0.16 + Math.sin(x * 0.05 - y * 0.2) * 0.1;
       const t = Math.min(1, Math.max(0, ty + wave));
-      const r = Math.round(10 + 50 * t);
-      const g = Math.round(70 + 130 * t);
-      const b = Math.round(130 + 120 * t);
       const i = (y * w + x) * 4;
-      buf[i] = r; buf[i + 1] = g; buf[i + 2] = b; buf[i + 3] = 255;
+      buf[i] = Math.round(c1.r + (c2.r - c1.r) * t);
+      buf[i + 1] = Math.round(c1.g + (c2.g - c1.g) * t);
+      buf[i + 2] = Math.round(c1.b + (c2.b - c1.b) * t);
+      buf[i + 3] = 255;
     }
   }
   return buf;
 }
 
-function buildHoneycombLookup(w, h, solidHex) {
+function buildHoneycombLookup(w, h, color1, color2) {
   const cv = document.createElement('canvas'); cv.width = Math.max(1, w); cv.height = Math.max(1, h);
   const cx = cv.getContext('2d');
-  const { r, g, b } = hexToRgb(solidHex || '#f5a623');
+  const { r, g, b } = hexToRgb(color1 || '#f5a623');
   cx.fillStyle = `rgb(${r},${g},${b})`;
   cx.fillRect(0, 0, w, h);
   const hexR = Math.max(6, Math.min(w, h) / 9);
   const hexW = hexR * 2, hexH = Math.sqrt(3) * hexR;
-  cx.strokeStyle = 'rgba(0,0,0,0.35)';
+  const line = hexToRgb(color2 || '#3a2400');
+  cx.strokeStyle = `rgba(${line.r},${line.g},${line.b},0.5)`;
   cx.lineWidth = Math.max(1, hexR * 0.08);
   const drawHexAt = (px, py, r2) => {
     cx.beginPath();
@@ -5727,7 +5881,113 @@ function buildHoneycombLookup(w, h, solidHex) {
   return cx.getImageData(0, 0, w, h).data;
 }
 
-function applyFill(imgData, w, h, fillMode, solidHex, stops, angleDeg, strength = 1, gradType = 'linear', styleType = 'fire') {
+function buildElectricLookup(w, h, bounds, color1, color2) {
+  const buf = new Uint8ClampedArray(w * h * 4);
+  const c1 = hexToRgb(color1 || '#0a0f1c');
+  const c2 = hexToRgb(color2 || '#7cf9ff');
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const n1 = Math.sin(x * 0.08 + Math.sin(y * 0.05) * 4);
+      const n2 = Math.sin(y * 0.11 - Math.cos(x * 0.04) * 5);
+      const crack = Math.abs(n1 * n2);
+      const t = Math.pow(1 - Math.min(1, crack * 1.6), 6);
+      const i = (y * w + x) * 4;
+      buf[i] = Math.round(c1.r + (c2.r - c1.r) * t);
+      buf[i + 1] = Math.round(c1.g + (c2.g - c1.g) * t);
+      buf[i + 2] = Math.round(c1.b + (c2.b - c1.b) * t);
+      buf[i + 3] = 255;
+    }
+  }
+  return buf;
+}
+
+function buildGalaxyLookup(w, h, bounds, color1, color2) {
+  const buf = new Uint8ClampedArray(w * h * 4);
+  const c1 = hexToRgb(color1 || '#0b0620');
+  const c2 = hexToRgb(color2 || '#c9a6ff');
+  const cx = w / 2, cy = h / 2;
+  const rMax = Math.max(w, h) / 2;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const dx = x - cx, dy = y - cy;
+      const dist = rMax > 0 ? Math.sqrt(dx * dx + dy * dy) / rMax : 0;
+      const swirl = Math.sin(dist * 8 - Math.atan2(dy, dx) * 3) * 0.15;
+      const hash = Math.abs(Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1;
+      const star = hash > 0.985;
+      let t = Math.max(0, Math.min(1, (1 - dist) * 0.5 + swirl + 0.15));
+      if (star) t = 1;
+      const i = (y * w + x) * 4;
+      buf[i] = Math.round(c1.r + (c2.r - c1.r) * t);
+      buf[i + 1] = Math.round(c1.g + (c2.g - c1.g) * t);
+      buf[i + 2] = Math.round(c1.b + (c2.b - c1.b) * t);
+      buf[i + 3] = 255;
+    }
+  }
+  return buf;
+}
+
+function buildWoodLookup(w, h, bounds, color1, color2) {
+  const buf = new Uint8ClampedArray(w * h * 4);
+  const c1 = hexToRgb(color1 || '#8a5a34');
+  const c2 = hexToRgb(color2 || '#3a2411');
+  const cx = w * 0.3, cy = h * 1.2;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const dx = x - cx, dy = y - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const ring = Math.sin(dist * 0.35 + Math.sin(x * 0.05) * 2) * 0.5 + 0.5;
+      const t = Math.pow(ring, 2.2);
+      const i = (y * w + x) * 4;
+      buf[i] = Math.round(c1.r + (c2.r - c1.r) * t);
+      buf[i + 1] = Math.round(c1.g + (c2.g - c1.g) * t);
+      buf[i + 2] = Math.round(c1.b + (c2.b - c1.b) * t);
+      buf[i + 3] = 255;
+    }
+  }
+  return buf;
+}
+
+function buildCarbonLookup(w, h, color1, color2) {
+  const buf = new Uint8ClampedArray(w * h * 4);
+  const c1 = hexToRgb(color1 || '#1a1a1a');
+  const c2 = hexToRgb(color2 || '#3a3a3a');
+  const period = Math.max(4, Math.min(w, h) / 16);
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const diag1 = Math.floor((x + y) / period);
+      const diag2 = Math.floor((x - y) / period);
+      let weave = (diag1 + diag2) % 2;
+      if (weave < 0) weave += 2;
+      const sheen = Math.sin(x * 0.3 + y * 0.15) * 0.08;
+      const t = Math.max(0, Math.min(1, weave * 0.8 + 0.1 + sheen));
+      const i = (y * w + x) * 4;
+      buf[i] = Math.round(c1.r + (c2.r - c1.r) * t);
+      buf[i + 1] = Math.round(c1.g + (c2.g - c1.g) * t);
+      buf[i + 2] = Math.round(c1.b + (c2.b - c1.b) * t);
+      buf[i + 3] = 255;
+    }
+  }
+  return buf;
+}
+
+const STYLE_DEFAULT_COLORS = {
+  fire: { c1: '#661400', c2: '#ffd479' },
+  water: { c1: '#0a2d4d', c2: '#8fd8ff' },
+  honeycomb: { c1: '#f5a623', c2: '#3a2400' },
+  electric: { c1: '#0a0f1c', c2: '#7cf9ff' },
+  galaxy: { c1: '#0b0620', c2: '#c9a6ff' },
+  wood: { c1: '#8a5a34', c2: '#3a2411' },
+  carbon: { c1: '#1a1a1a', c2: '#3a3a3a' }
+};
+function applyStyleDefaultColors(prefix, styleType) {
+  const d = STYLE_DEFAULT_COLORS[styleType] || STYLE_DEFAULT_COLORS.fire;
+  const c1 = document.getElementById(prefix + 'StyleColor1');
+  const c2 = document.getElementById(prefix + 'StyleColor2');
+  if (c1) c1.value = d.c1;
+  if (c2) c2.value = d.c2;
+}
+
+function applyFill(imgData, w, h, fillMode, solidHex, stops, angleDeg, strength = 1, gradType = 'linear', styleType = 'fire', styleColor1, styleColor2) {
   const data = imgData.data;
   if (fillMode === 'gradient') {
     
@@ -5775,9 +6035,13 @@ function applyFill(imgData, w, h, fillMode, solidHex, stops, angleDeg, strength 
     if (minX <= maxX && minY <= maxY) bounds = { x: minX, y: minY, w: maxX - minX + 1, h: maxY - minY + 1 };
 
     let texData;
-    if (styleType === 'water') texData = buildWaterLookup(w, h, bounds);
-    else if (styleType === 'honeycomb') texData = buildHoneycombLookup(w, h, solidHex);
-    else texData = buildFireLookup(w, h, bounds);
+    if (styleType === 'water') texData = buildWaterLookup(w, h, bounds, styleColor1, styleColor2);
+    else if (styleType === 'honeycomb') texData = buildHoneycombLookup(w, h, styleColor1 || solidHex, styleColor2);
+    else if (styleType === 'electric') texData = buildElectricLookup(w, h, bounds, styleColor1, styleColor2);
+    else if (styleType === 'galaxy') texData = buildGalaxyLookup(w, h, bounds, styleColor1, styleColor2);
+    else if (styleType === 'wood') texData = buildWoodLookup(w, h, bounds, styleColor1, styleColor2);
+    else if (styleType === 'carbon') texData = buildCarbonLookup(w, h, styleColor1, styleColor2);
+    else texData = buildFireLookup(w, h, bounds, styleColor1, styleColor2);
 
     for (let i = 0; i < data.length; i += 4) {
       if (data[i + 3] > 0) {
@@ -5848,16 +6112,109 @@ function finalizeCanvas(targetCtx, w, h, imgData, settings) {
       outCtx.drawImage(icon, Math.cos(a) * settings.outlineSize, Math.sin(a) * settings.outlineSize);
     }
     outCtx.globalCompositeOperation = 'source-in';
-    outCtx.fillStyle = settings.outlineColor;
+    if (settings.outlineFillType === 'gradient' && settings.outlineStops && settings.outlineStops.length) {
+      const r = Math.max(w, h) / 2;
+      let grad;
+      if (settings.outlineGradientType === 'radial') {
+        grad = outCtx.createRadialGradient(w/2, h/2, 0, w/2, h/2, r);
+      } else {
+        const rad = (settings.outlineAngle - 90) * Math.PI / 180;
+        grad = outCtx.createLinearGradient(w/2 - Math.cos(rad)*r, h/2 - Math.sin(rad)*r, w/2 + Math.cos(rad)*r, h/2 + Math.sin(rad)*r);
+      }
+      settings.outlineStops.forEach(s => grad.addColorStop(Math.max(0, Math.min(1, s.pos/100)), s.color));
+      outCtx.fillStyle = grad;
+    } else {
+      outCtx.fillStyle = settings.outlineColor;
+    }
     outCtx.fillRect(0, 0, w, h);
     outCtx.globalCompositeOperation = 'source-over';
   }
   outCtx.drawImage(icon, 0, 0);
+
+  // Wewnętrzna krawędź — pierścień tuż WEWNĄTRZ krawędzi kształtu (erozja maski, a nie dylatacja).
+  if (settings.innerOutlineEnabled && settings.innerOutlineSize > 0) {
+    const n = settings.innerOutlineSize;
+
+    // 1) odwrócona maska: białe dookoła ikony, przezroczyste tam gdzie ikona
+    const inv = document.createElement('canvas');
+    inv.width = w; inv.height = h;
+    const invCtx = inv.getContext('2d');
+    invCtx.fillStyle = '#fff';
+    invCtx.fillRect(0, 0, w, h);
+    invCtx.globalCompositeOperation = 'destination-out';
+    invCtx.drawImage(icon, 0, 0);
+
+    // 2) dylatacja odwróconej maski o n px (ten sam patent co przy zewnętrznej krawędzi)
+    const invDilated = document.createElement('canvas');
+    invDilated.width = w; invDilated.height = h;
+    const invDilCtx = invDilated.getContext('2d');
+    const step2 = Math.max(0.5, Math.PI / (n * 1.5));
+    for (let a = 0; a < Math.PI * 2; a += step2) {
+      invDilCtx.drawImage(inv, Math.cos(a) * n, Math.sin(a) * n);
+    }
+
+    // 3) erozja ikony = pełna biała płaszczyzna MINUS rozszerzona odwrotność
+    const eroded = document.createElement('canvas');
+    eroded.width = w; eroded.height = h;
+    const erCtx = eroded.getContext('2d');
+    erCtx.fillStyle = '#fff';
+    erCtx.fillRect(0, 0, w, h);
+    erCtx.globalCompositeOperation = 'destination-out';
+    erCtx.drawImage(invDilated, 0, 0);
+
+    // 4) pierścień = oryginalny kształt MINUS erozja
+    const ring = document.createElement('canvas');
+    ring.width = w; ring.height = h;
+    const ringCtx = ring.getContext('2d');
+    ringCtx.drawImage(icon, 0, 0);
+    ringCtx.globalCompositeOperation = 'destination-out';
+    ringCtx.drawImage(eroded, 0, 0);
+    ringCtx.globalCompositeOperation = 'source-over';
+
+    // 5) pokoloruj pierścień (jednolity kolor albo gradient)
+    ringCtx.globalCompositeOperation = 'source-in';
+    if (settings.innerOutlineFillType === 'gradient' && settings.innerOutlineStops && settings.innerOutlineStops.length) {
+      const r = Math.max(w, h) / 2;
+      let grad;
+      if (settings.innerOutlineGradientType === 'radial') {
+        grad = ringCtx.createRadialGradient(w/2, h/2, 0, w/2, h/2, r);
+      } else {
+        const rad = (settings.innerOutlineAngle - 90) * Math.PI / 180;
+        grad = ringCtx.createLinearGradient(w/2 - Math.cos(rad)*r, h/2 - Math.sin(rad)*r, w/2 + Math.cos(rad)*r, h/2 + Math.sin(rad)*r);
+      }
+      settings.innerOutlineStops.forEach(s => grad.addColorStop(Math.max(0, Math.min(1, s.pos/100)), s.color));
+      ringCtx.fillStyle = grad;
+    } else {
+      ringCtx.fillStyle = settings.innerOutlineColor;
+    }
+    ringCtx.fillRect(0, 0, w, h);
+    ringCtx.globalCompositeOperation = 'source-over';
+
+    // 6) opcjonalne lekkie rozmycie pierścienia — przycięte do kształtu ikony,
+    // żeby blur nie wychodził poza jej krawędź w przezroczystość
+    let ringOut = ring;
+    if (settings.innerOutlineBlur > 0) {
+      const blurred = document.createElement('canvas');
+      blurred.width = w; blurred.height = h;
+      const blurCtx = blurred.getContext('2d');
+      blurCtx.filter = `blur(${settings.innerOutlineBlur}px)`;
+      blurCtx.drawImage(ring, 0, 0);
+      blurCtx.filter = 'none';
+      blurCtx.globalCompositeOperation = 'destination-in';
+      blurCtx.drawImage(icon, 0, 0);
+      blurCtx.globalCompositeOperation = 'source-over';
+      ringOut = blurred;
+    }
+
+    // 7) pierścień na wierzch — wzdłuż wewnętrznej krawędzi kształtu
+    outCtx.drawImage(ringOut, 0, 0);
+  }
+
   targetCtx.clearRect(0, 0, w, h);
 
   if (settings.bgStyle !== 'none') {
     targetCtx.save();
-    const pad = w * 0.02;
+    const pad = w * ((settings.bgEdgePadding !== undefined && settings.bgEdgePadding !== null ? settings.bgEdgePadding : 2) / 100);
     const x = pad, y = pad, width = w - pad * 2, height = h - pad * 2;
     const rawRadius = (settings.bgRounding !== null && settings.bgRounding !== undefined) ? settings.bgRounding : w * 0.22;
     const radius = Math.max(0, Math.min(rawRadius, Math.min(width, height) / 2));
@@ -5931,10 +6288,12 @@ function finalizeCanvas(targetCtx, w, h, imgData, settings) {
 function bindPaneEvents(prefix, renderFn) {
   const ids = [
     'ColorA', 'ColorB', 'GradientAngle', 'ShadowToggle', 'ShadowStrength',
-    'OutlineToggle', 'OutlineColor', 'OutlineSize',
+    'OutlineToggle', 'OutlineColor', 'OutlineSize', 'OutlineFillType', 'OutlineGradientType', 'OutlineGradientAngle',
+    'StyleColor1', 'StyleColor2',
+    'InnerOutlineToggle', 'InnerOutlineColor', 'InnerOutlineSize', 'InnerOutlineFillType', 'InnerOutlineGradientType', 'InnerOutlineGradientAngle', 'InnerOutlineBlur',
     'BgStyle', 'BgOpacity', 'BgBorderOpacity', 'BgColorA', 'BgColorB', 'BgBorder',
     'BgStyle', 'BgOpacity', 'BgBorderOpacity', 'BgColorA', 'BgColorB', 'BgBorder',
-    'BgFillType', 'BgBorderFillType', 'BgBorderColor', 'BgOutlineToggle', 'FillStrength', 'BgRounding', 'GradientType', 'BgGradientType', 'BgBorderGradientType',
+    'BgFillType', 'BgBorderFillType', 'BgBorderColor', 'BgOutlineToggle', 'FillStrength', 'BgRounding', 'BgEdgePadding', 'GradientType', 'BgGradientType', 'BgBorderGradientType',
     'InnerShadowToggle', 'InnerShadowColor', 'InnerShadowOpacity', 'InnerShadowBlur', 'InnerShadowX', 'InnerShadowY'
   ];
   ids.forEach(baseId => {
@@ -5944,12 +6303,23 @@ function bindPaneEvents(prefix, renderFn) {
       if (baseId === 'GradientAngle') document.getElementById(prefix + 'AngleVal').textContent = el.value;
       if (baseId === 'ShadowStrength') document.getElementById(prefix + 'ShadowStrengthVal').textContent = el.value;
       if (baseId === 'OutlineSize') document.getElementById(prefix + 'OutlineSizeVal').textContent = el.value;
+      if (baseId === 'OutlineGradientAngle' && document.getElementById(prefix + 'OutlineAngleVal'))
+        document.getElementById(prefix + 'OutlineAngleVal').textContent = el.value;
+      if (baseId === 'InnerOutlineSize' && document.getElementById(prefix + 'InnerOutlineSizeVal'))
+        document.getElementById(prefix + 'InnerOutlineSizeVal').textContent = el.value;
+      if (baseId === 'InnerOutlineBlur' && document.getElementById(prefix + 'InnerOutlineBlurVal'))
+        document.getElementById(prefix + 'InnerOutlineBlurVal').textContent = el.value;
+      if (baseId === 'InnerOutlineGradientAngle' && document.getElementById(prefix + 'InnerOutlineAngleVal'))
+        document.getElementById(prefix + 'InnerOutlineAngleVal').textContent = el.value;
+      if (baseId === 'OutlineFillType' || baseId === 'InnerOutlineFillType') updateOutlineUi(prefix);
       if (baseId === 'BgOpacity') document.getElementById(prefix + 'BgOpacityVal').textContent = el.value;
       if (baseId === 'BgBorderOpacity' && document.getElementById(prefix + 'BgBorderOpacityVal')) 
         document.getElementById(prefix + 'BgBorderOpacityVal').textContent = el.value;
       if (baseId === 'FillStrength') document.getElementById(prefix + 'FillStrengthVal').textContent = el.value;
       if (baseId === 'BgStyle' || baseId === 'BgFillType' || baseId === 'BgBorderFillType') updateBgUi(prefix);
       if (baseId === 'BgRounding') document.getElementById(prefix + 'BgRoundingVal').textContent = el.value;
+      if (baseId === 'BgEdgePadding' && document.getElementById(prefix + 'BgEdgePaddingVal'))
+        document.getElementById(prefix + 'BgEdgePaddingVal').textContent = el.value;
       if (baseId === 'InnerShadowOpacity') document.getElementById(prefix + 'InnerShadowOpacityVal').textContent = el.value;
       if (baseId === 'InnerShadowBlur') document.getElementById(prefix + 'InnerShadowBlurVal').textContent = el.value;
       if (baseId === 'InnerShadowX') document.getElementById(prefix + 'InnerShadowXVal').textContent = el.value;
@@ -5957,6 +6327,26 @@ function bindPaneEvents(prefix, renderFn) {
       renderFn();
     });
   });
+}
+
+function updateOutlineUi(prefix) {
+  const outFillType = document.getElementById(prefix + 'OutlineFillType');
+  const outSolidWrap = document.getElementById(prefix + 'OutlineSolidWrap');
+  const outGradEditor = document.getElementById(prefix + 'OutlineGradientEditor');
+  if (outFillType) {
+    const isGrad = outFillType.value === 'gradient';
+    if (outSolidWrap) outSolidWrap.style.display = isGrad ? 'none' : 'block';
+    if (outGradEditor) outGradEditor.style.display = isGrad ? 'block' : 'none';
+  }
+
+  const innerFillType = document.getElementById(prefix + 'InnerOutlineFillType');
+  const innerSolidWrap = document.getElementById(prefix + 'InnerOutlineSolidWrap');
+  const innerGradEditor = document.getElementById(prefix + 'InnerOutlineGradientEditor');
+  if (innerFillType) {
+    const isGrad = innerFillType.value === 'gradient';
+    if (innerSolidWrap) innerSolidWrap.style.display = isGrad ? 'none' : 'block';
+    if (innerGradEditor) innerGradEditor.style.display = isGrad ? 'block' : 'none';
+  }
 }
 
 function getPaneSettings(prefix) {
@@ -5968,6 +6358,18 @@ function getPaneSettings(prefix) {
     outlineEnabled: document.getElementById(prefix + 'OutlineToggle').checked,
     outlineColor: document.getElementById(prefix + 'OutlineColor').value,
     outlineSize: parseInt(document.getElementById(prefix + 'OutlineSize').value, 10),
+    outlineFillType: document.getElementById(prefix + 'OutlineFillType') ? document.getElementById(prefix + 'OutlineFillType').value : 'solid',
+    outlineStops: gradientEditors[prefix + 'Outline'] ? gradientEditors[prefix + 'Outline'].getStops() : null,
+    outlineGradientType: document.getElementById(prefix + 'OutlineGradientType') ? document.getElementById(prefix + 'OutlineGradientType').value : 'linear',
+    outlineAngle: gradientEditors[prefix + 'Outline'] ? gradientEditors[prefix + 'Outline'].getAngle() : 180,
+    innerOutlineEnabled: document.getElementById(prefix + 'InnerOutlineToggle') ? document.getElementById(prefix + 'InnerOutlineToggle').checked : false,
+    innerOutlineSize: document.getElementById(prefix + 'InnerOutlineSize') ? parseInt(document.getElementById(prefix + 'InnerOutlineSize').value, 10) : 0,
+    innerOutlineColor: document.getElementById(prefix + 'InnerOutlineColor') ? document.getElementById(prefix + 'InnerOutlineColor').value : '#000000',
+    innerOutlineFillType: document.getElementById(prefix + 'InnerOutlineFillType') ? document.getElementById(prefix + 'InnerOutlineFillType').value : 'solid',
+    innerOutlineBlur: document.getElementById(prefix + 'InnerOutlineBlur') ? parseFloat(document.getElementById(prefix + 'InnerOutlineBlur').value) : 0,
+    innerOutlineStops: gradientEditors[prefix + 'InnerOutline'] ? gradientEditors[prefix + 'InnerOutline'].getStops() : null,
+    innerOutlineGradientType: document.getElementById(prefix + 'InnerOutlineGradientType') ? document.getElementById(prefix + 'InnerOutlineGradientType').value : 'linear',
+    innerOutlineAngle: gradientEditors[prefix + 'InnerOutline'] ? gradientEditors[prefix + 'InnerOutline'].getAngle() : 180,
     bgStyle: document.getElementById(prefix + 'BgStyle').value,
     bgFillType: document.getElementById(prefix + 'BgFillType') ? document.getElementById(prefix + 'BgFillType').value : 'gradient',
     bgColorA: document.getElementById(prefix + 'BgColorA') ? document.getElementById(prefix + 'BgColorA').value : '#3b3b3f',
@@ -5976,6 +6378,7 @@ function getPaneSettings(prefix) {
     bgOpacity: parseInt(document.getElementById(prefix + 'BgOpacity').value, 10),
     bgBorderOpacity: parseInt(bgBorderOpEl ? bgBorderOpEl.value : 100, 10),
     bgRounding: document.getElementById(prefix + 'BgRounding') ? parseInt(document.getElementById(prefix + 'BgRounding').value, 10) : null,
+    bgEdgePadding: document.getElementById(prefix + 'BgEdgePadding') ? parseFloat(document.getElementById(prefix + 'BgEdgePadding').value) : 2,
     bgStops: bgEd ? bgEd.getStops() : null,
     bgAngle: bgEd ? bgEd.getAngle() : 180,
     bgBorderStops: bgBorderEd ? bgBorderEd.getStops() : null,
@@ -6759,7 +7162,9 @@ function renderRoleIcon() {
     imgData = applyFill(imgData, iconPixelSize, iconPixelSize, rolesFillMode,
       document.getElementById('rolesColor').value, gradientEditors.roles.getStops(),
       gradientEditors.roles.getAngle(), fillStr, document.getElementById('rolesGradientType') ? document.getElementById('rolesGradientType').value : 'linear',
-      document.getElementById('rolesStyleType') ? document.getElementById('rolesStyleType').value : 'fire');
+      document.getElementById('rolesStyleType') ? document.getElementById('rolesStyleType').value : 'fire',
+      document.getElementById('rolesStyleColor1') ? document.getElementById('rolesStyleColor1').value : undefined,
+      document.getElementById('rolesStyleColor2') ? document.getElementById('rolesStyleColor2').value : undefined);
 
     const filledCanvas = document.createElement('canvas');
     filledCanvas.width = iconPixelSize; filledCanvas.height = iconPixelSize;
@@ -6916,7 +7321,9 @@ async function renderEmojiSilhouette() {
   applyFill(imgData, size, size, emojiFillMode, emojiColor.value,
     gradientEditors.emoji ? gradientEditors.emoji.getStops() : [],
     gradientEditors.emoji ? gradientEditors.emoji.getAngle() : 180, 1, document.getElementById('emojiGradientType') ? document.getElementById('emojiGradientType').value : 'linear',
-    document.getElementById('emojiStyleType') ? document.getElementById('emojiStyleType').value : 'fire');
+    document.getElementById('emojiStyleType') ? document.getElementById('emojiStyleType').value : 'fire',
+    document.getElementById('emojiStyleColor1') ? document.getElementById('emojiStyleColor1').value : undefined,
+    document.getElementById('emojiStyleColor2') ? document.getElementById('emojiStyleColor2').value : undefined);
   const settings = getPaneSettings('emoji');
   finalizeCanvas(eCtx, size, size, imgData, settings);
   document.querySelectorAll('#pane-emoji .preview-emoji-img').forEach(img => img.src = emojiCanvas.toDataURL());
@@ -7028,7 +7435,9 @@ function renderImageSilhouette() {
   applyFill(imgData, w, h, imageFillMode, imageColor.value,
     gradientEditors.image ? gradientEditors.image.getStops() : [],
     gradientEditors.image ? gradientEditors.image.getAngle() : 180, fillStr, document.getElementById('imageGradientType') ? document.getElementById('imageGradientType').value : 'linear',
-    document.getElementById('imageStyleType') ? document.getElementById('imageStyleType').value : 'fire');
+    document.getElementById('imageStyleType') ? document.getElementById('imageStyleType').value : 'fire',
+    document.getElementById('imageStyleColor1') ? document.getElementById('imageStyleColor1').value : undefined,
+    document.getElementById('imageStyleColor2') ? document.getElementById('imageStyleColor2').value : undefined);
   const settings = getPaneSettings('image');
   finalizeCanvas(iCtx, w, h, imgData, settings);
   document.querySelectorAll('#pane-image .preview-emoji-img').forEach(img => img.src = imageCanvas.toDataURL());
@@ -7183,7 +7592,9 @@ function getGlobalBatchSettings() {
     solidColor: document.getElementById('batchColor').value,
     stops: gradientEditors.batch.getStops(),
     angle: gradientEditors.batch.getAngle(),
-    styleType: document.getElementById('batchStyleType') ? document.getElementById('batchStyleType').value : 'fire'
+    styleType: document.getElementById('batchStyleType') ? document.getElementById('batchStyleType').value : 'fire',
+    styleColor1: document.getElementById('batchStyleColor1') ? document.getElementById('batchStyleColor1').value : undefined,
+    styleColor2: document.getElementById('batchStyleColor2') ? document.getElementById('batchStyleColor2').value : undefined
   };
 }
 
@@ -7240,7 +7651,7 @@ function processBatchImage(item, bgTol) {
   } else {
     for (let i = 0; i < data.length; i += 4) { if (data[i+3] <= 10) data[i+3] = 0; }
   }
-  applyFill(imgData, w, h, eff.fillMode, eff.solidColor, eff.stops, eff.angle, 1, document.getElementById('batchGradientType') ? document.getElementById('batchGradientType').value : 'linear', eff.styleType || 'fire');
+  applyFill(imgData, w, h, eff.fillMode, eff.solidColor, eff.stops, eff.angle, 1, document.getElementById('batchGradientType') ? document.getElementById('batchGradientType').value : 'linear', eff.styleType || 'fire', eff.styleColor1, eff.styleColor2);
   const finalCanvas = document.createElement('canvas'); finalCanvas.width = w; finalCanvas.height = h;
   finalizeCanvas(finalCanvas.getContext('2d'), w, h, imgData, eff);
   return finalCanvas;
@@ -7290,7 +7701,7 @@ function buildMiniForm(item) {
   const gradRowA = row('Start', colorAInput);
   const gradRowB = row('Koniec', colorBInput);
   const styleTypeSel = document.createElement('select');
-  styleTypeSel.innerHTML = '<option value="fire">🔥 Ogień</option><option value="water">💧 Woda</option><option value="honeycomb">🍯 Plaster miodu</option>';
+  styleTypeSel.innerHTML = '<option value="fire">🔥 Ogień</option><option value="water">💧 Woda</option><option value="honeycomb">🍯 Plaster miodu</option><option value="electric">⚡ Elektryczność</option><option value="galaxy">🌌 Galaktyka</option><option value="wood">🪵 Drewno</option><option value="carbon">⬛ Karbon</option>';
   styleTypeSel.value = item.overrides.styleType || 'fire';
   const styleRow = row('Rodzaj', styleTypeSel);
   function syncFillRows() {
@@ -7565,6 +7976,18 @@ gradientEditors.batchBg = createGradientEditor(document.getElementById('batchBgG
   onChange: () => reprocessBatch() 
 });
 
+gradientEditors.batchOutline = createGradientEditor(document.getElementById('batchOutlineGradientEditor'), {
+  initialStops: [{ pos: 0, color: '#ffffff' }, { pos: 100, color: '#5c5c62' }],
+  angle: 180,
+  onChange: () => reprocessBatch()
+});
+
+gradientEditors.batchInnerOutline = createGradientEditor(document.getElementById('batchInnerOutlineGradientEditor'), {
+  initialStops: [{ pos: 0, color: '#000000' }, { pos: 100, color: '#3b3b3f' }],
+  angle: 180,
+  onChange: () => reprocessBatch()
+});
+
 document.getElementById('batchUploadBtn')?.addEventListener('click', () => document.getElementById('batchFileInput').click());
 
 document.getElementById('batchAssetsBtn')?.addEventListener('click', () => {
@@ -7575,6 +7998,7 @@ updateBgUi('emoji');
 updateBgUi('image');
 updateBgUi('batch');
 updateBgUi('roles');
+updateOutlineUi('batch');
 renderRoleIcon();
 
 var boardState = {
@@ -11557,6 +11981,8 @@ document.getElementById('accountsTabBtn').addEventListener('click', renderAccoun
         fillStops: (window.gradientEditors && window.gradientEditors[prefix]) ? window.gradientEditors[prefix].getStops() : [],
         fillAngle: (window.gradientEditors && window.gradientEditors[prefix]) ? window.gradientEditors[prefix].getAngle() : 180,
         styleType: getVal(prefix + 'StyleType') || 'fire',
+        styleColor1: getVal(prefix + 'StyleColor1'),
+        styleColor2: getVal(prefix + 'StyleColor2'),
 
         outlineToggle: getChecked(prefix + 'OutlineToggle'),
         outlineColor: getVal(prefix + 'OutlineColor') || '#ffffff',
@@ -11642,6 +12068,8 @@ document.getElementById('accountsTabBtn').addEventListener('click', renderAccoun
     setInput(prefix + 'FillStrength', style.fillStrength);
     setText(prefix + 'FillStrengthVal', style.fillStrength);
     setInput(prefix + 'StyleType', style.styleType);
+    setInput(prefix + 'StyleColor1', style.styleColor1);
+    setInput(prefix + 'StyleColor2', style.styleColor2);
 
     setInput(prefix + 'OutlineToggle', style.outlineToggle, true);
     setInput(prefix + 'OutlineColor', style.outlineColor);
