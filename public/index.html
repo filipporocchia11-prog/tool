@@ -2086,9 +2086,6 @@
     <input type="text" id="authUser" autocomplete="username" placeholder="np. flajp">
     <label for="authPass" style="margin-top:14px;">Hasło</label>
     <input type="password" id="authPass" autocomplete="current-password" placeholder="••••••••">
-    <label style="margin-top:14px; display:flex; align-items:center; gap:8px; font-weight:400; cursor:pointer;">
-      <input type="checkbox" id="authRemember" checked style="width:auto; margin:0;"> Zapamiętaj mnie
-    </label>
     <p class="auth-error" id="authError"></p>
     <button class="primary" id="authLoginBtn" style="margin-top:6px;width:100%;">Zaloguj</button>
     <p class="hint auth-footnote">Wpisz odpowiednie informacje logowania.</p>
@@ -11735,11 +11732,11 @@ async function api(path, opts = {}) {
   return data;
 }
 
-async function attemptLogin(username, password, remember) {
+async function attemptLogin(username, password) {
   const errEl = document.getElementById('authError');
   errEl.textContent = '';
   try {
-    const data = await api('/api/login', { method: 'POST', body: JSON.stringify({ username, password, remember: !!remember }) });
+    const data = await api('/api/login', { method: 'POST', body: JSON.stringify({ username, password }) });
     currentUser = data; window.currentUser = data; enterApp();
   } catch (e) {
     errEl.textContent = e.message;
@@ -11899,7 +11896,7 @@ document.getElementById('clearLogsBtn').addEventListener('click', async () => {
 });
 
 document.getElementById('authLoginBtn').addEventListener('click', () => {
-  attemptLogin(document.getElementById('authUser').value.trim(), document.getElementById('authPass').value, document.getElementById('authRemember').checked);
+  attemptLogin(document.getElementById('authUser').value.trim(), document.getElementById('authPass').value);
 });
 ['authUser', 'authPass'].forEach(id => {
   document.getElementById(id).addEventListener('keydown', e => {
