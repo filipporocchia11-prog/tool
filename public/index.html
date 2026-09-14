@@ -5815,11 +5815,13 @@ function buildFireLookup(w, h, bounds, color1, color2) {
   const by = bounds ? bounds.y : 0, bh = bounds ? bounds.h : h;
   const c1 = hexToRgb(color1 || '#661400');
   const c2 = hexToRgb(color2 || '#ffd479');
+  const wN = Math.max(1, w);
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       const ty = bh > 0 ? (y - by) / bh : 0;
-      const flicker = Math.sin(x * 0.5 + y * 0.15) * 0.07 + Math.sin(x * 0.13 - y * 0.31) * 0.05;
-      const t = Math.min(1, Math.max(0, (1 - ty) + flicker));
+      const nx = x / wN;
+      const flicker = Math.sin(nx * 9 + ty * 6) * 0.09 + Math.sin(nx * 22 - ty * 13) * 0.05;
+      const t = Math.min(1, Math.max(0, ty + flicker));
       const i = (y * w + x) * 4;
       buf[i] = Math.round(c1.r + (c2.r - c1.r) * t);
       buf[i + 1] = Math.round(c1.g + (c2.g - c1.g) * t);
@@ -5857,14 +5859,14 @@ function buildHoneycombLookup(w, h, color1, color2) {
   cx.fillStyle = `rgb(${r},${g},${b})`;
   cx.fillRect(0, 0, w, h);
   const hexR = Math.max(6, Math.min(w, h) / 9);
-  const hexW = hexR * 2, hexH = Math.sqrt(3) * hexR;
+  const hexW = Math.sqrt(3) * hexR, hexH = hexR * 2;
   const line = hexToRgb(color2 || '#3a2400');
   cx.strokeStyle = `rgba(${line.r},${line.g},${line.b},0.5)`;
   cx.lineWidth = Math.max(1, hexR * 0.08);
   const drawHexAt = (px, py, r2) => {
     cx.beginPath();
     for (let i = 0; i < 6; i++) {
-      const a = Math.PI / 180 * (60 * i - 30);
+      const a = Math.PI / 180 * (60 * i - 90);
       const x2 = px + r2 * Math.cos(a), y2 = py + r2 * Math.sin(a);
       if (i === 0) cx.moveTo(x2, y2); else cx.lineTo(x2, y2);
     }
@@ -5873,8 +5875,8 @@ function buildHoneycombLookup(w, h, color1, color2) {
   };
   let row = 0;
   for (let yy = -hexH; yy < h + hexH; yy += hexH * 0.75, row++) {
-    const xOffset = (row % 2 === 0) ? 0 : hexW * 0.75;
-    for (let xx = -hexW; xx < w + hexW; xx += hexW * 1.5) {
+    const xOffset = (row % 2 === 0) ? 0 : hexW * 0.5;
+    for (let xx = -hexW; xx < w + hexW; xx += hexW) {
       drawHexAt(xx + xOffset, yy, hexR);
     }
   }
