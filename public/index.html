@@ -2295,14 +2295,14 @@
           <div class="field">
             <label for="rolesStyleType">Rodzaj stylu</label>
             <select id="rolesStyleType">
-              <option value="fire">🔥 Ogień</option>
-              <option value="water">💧 Woda</option>
-              <option value="honeycomb">🍯 Plaster miodu</option>
-              <option value="electric">⚡ Elektryczność</option>
-              <option value="galaxy">🌌 Galaktyka</option>
-              <option value="wood">🪵 Drewno</option>
-              <option value="carbon">⬛ Karbon</option>
-              <option value="moon">🌙 Księżyc</option>
+              <option value="fire">Ogień</option>
+              <option value="water">Woda</option>
+              <option value="honeycomb">Plaster miodu</option>
+              <option value="electric">Elektryczność</option>
+              <option value="galaxy">Galaktyka</option>
+              <option value="wood">Drewno</option>
+              <option value="carbon">Karbon</option>
+              <option value="moon">Księżyc</option>
             </select>
           </div>
           <div class="field">
@@ -2562,14 +2562,14 @@
           <div class="field">
             <label for="imageStyleType">Rodzaj stylu</label>
             <select id="imageStyleType">
-              <option value="fire">🔥 Ogień</option>
-              <option value="water">💧 Woda</option>
-              <option value="honeycomb">🍯 Plaster miodu</option>
-              <option value="electric">⚡ Elektryczność</option>
-              <option value="galaxy">🌌 Galaktyka</option>
-              <option value="wood">🪵 Drewno</option>
-              <option value="carbon">⬛ Karbon</option>
-              <option value="moon">🌙 Księżyc</option>
+              <option value="fire">Ogień</option>
+              <option value="water">Woda</option>
+              <option value="honeycomb">Plaster miodu</option>
+              <option value="electric">Elektryczność</option>
+              <option value="galaxy">Galaktyka</option>
+              <option value="wood">Drewno</option>
+              <option value="carbon">Karbon</option>
+              <option value="moon">Księżyc</option>
             </select>
           </div>
           <div class="field">
@@ -2823,14 +2823,14 @@
           <div class="field">
             <label for="emojiStyleType">Rodzaj stylu</label>
             <select id="emojiStyleType">
-              <option value="fire">🔥 Ogień</option>
-              <option value="water">💧 Woda</option>
-              <option value="honeycomb">🍯 Plaster miodu</option>
-              <option value="electric">⚡ Elektryczność</option>
-              <option value="galaxy">🌌 Galaktyka</option>
-              <option value="wood">🪵 Drewno</option>
-              <option value="carbon">⬛ Karbon</option>
-              <option value="moon">🌙 Księżyc</option>
+              <option value="fire">Ogień</option>
+              <option value="water">Woda</option>
+              <option value="honeycomb">Plaster miodu</option>
+              <option value="electric">Elektryczność</option>
+              <option value="galaxy">Galaktyka</option>
+              <option value="wood">Drewno</option>
+              <option value="carbon">Karbon</option>
+              <option value="moon">Księżyc</option>
             </select>
           </div>
           <div class="field">
@@ -3112,14 +3112,14 @@
           <div class="field">
             <label for="batchStyleType">Rodzaj stylu</label>
             <select id="batchStyleType">
-              <option value="fire">🔥 Ogień</option>
-              <option value="water">💧 Woda</option>
-              <option value="honeycomb">🍯 Plaster miodu</option>
-              <option value="electric">⚡ Elektryczność</option>
-              <option value="galaxy">🌌 Galaktyka</option>
-              <option value="wood">🪵 Drewno</option>
-              <option value="carbon">⬛ Karbon</option>
-              <option value="moon">🌙 Księżyc</option>
+              <option value="fire">Ogień</option>
+              <option value="water">Woda</option>
+              <option value="honeycomb">Plaster miodu</option>
+              <option value="electric">Elektryczność</option>
+              <option value="galaxy">Galaktyka</option>
+              <option value="wood">Drewno</option>
+              <option value="carbon">Karbon</option>
+              <option value="moon">Księżyc</option>
             </select>
           </div>
           <div class="field">
@@ -7792,7 +7792,7 @@ function buildMiniForm(item) {
   const gradRowA = row('Start', colorAInput);
   const gradRowB = row('Koniec', colorBInput);
   const styleTypeSel = document.createElement('select');
-  styleTypeSel.innerHTML = '<option value="fire">🔥 Ogień</option><option value="water">💧 Woda</option><option value="honeycomb">🍯 Plaster miodu</option><option value="electric">⚡ Elektryczność</option><option value="galaxy">🌌 Galaktyka</option><option value="wood">🪵 Drewno</option><option value="carbon">⬛ Karbon</option><option value="moon">🌙 Księżyc</option>';
+  styleTypeSel.innerHTML = '<option value="fire">Ogień</option><option value="water">Woda</option><option value="honeycomb">Plaster miodu</option><option value="electric">Elektryczność</option><option value="galaxy">Galaktyka</option><option value="wood">Drewno</option><option value="carbon">Karbon</option><option value="moon">Księżyc</option>';
   styleTypeSel.value = item.overrides.styleType || 'fire';
   const styleRow = row('Rodzaj', styleTypeSel);
   function syncFillRows() {
@@ -11078,6 +11078,17 @@ function initCustomSelectUI(selectId, wrapperId, toggleId, dropdownId, labelId) 
 }
 initCustomSelectUI('ftStyle', 'ftStyleWrapper', 'ftStyleToggle', 'ftStyleDropdown', 'ftStyleLabel');
 
+const STYLE_ICON_MAP = {
+  fire: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px; margin-right:6px; flex:none;"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
+  water: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px; margin-right:6px; flex:none;"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>',
+  honeycomb: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" style="vertical-align:-3px; margin-right:6px; flex:none;"><path d="M9 3.5 3.5 7v6L9 16.5l5.5-3.5V7L9 3.5Z" transform="translate(3 3.5) scale(0.85)"/><path d="M12 2 4 7v10l8 5 8-5V7l-8-5Z"/></svg>',
+  electric: '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px; margin-right:6px; flex:none;"><path d="M13 2 4.09 12.5H11l-1 9L20 10.5H13l0-8.5Z"/></svg>',
+  galaxy: '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px; margin-right:6px; flex:none;"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8Z"/><circle cx="19" cy="19" r="1.6"/><circle cx="5" cy="18" r="1.1"/></svg>',
+  wood: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px; margin-right:6px; flex:none;"><path d="M12 2 6 9h3l-4 6h4l-3 5h12l-3-5h4l-4-6h3l-6-7Z"/><path d="M12 17v5"/></svg>',
+  carbon: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" style="vertical-align:-3px; margin-right:6px; flex:none;"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg>',
+  moon: '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-3px; margin-right:6px; flex:none;"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>'
+};
+
 function autoCustomSelect(selectId) {
   const select = document.getElementById(selectId);
   if (!select || select.dataset.customized) return;
@@ -11108,7 +11119,8 @@ function autoCustomSelect(selectId) {
 
   function syncLabel() {
     const opt = select.options[select.selectedIndex];
-    label.textContent = opt ? opt.textContent : '';
+    const icon = opt ? STYLE_ICON_MAP[opt.value] : null;
+    label.innerHTML = opt ? (icon ? icon + opt.textContent : opt.textContent) : '';
     dropdown.querySelectorAll('.custom-nav-item').forEach(item => {
       item.classList.toggle('active', item.dataset.value === select.value);
     });
@@ -11120,7 +11132,8 @@ function autoCustomSelect(selectId) {
       const item = document.createElement('div');
       item.className = 'custom-nav-item' + (opt.value === select.value ? ' active' : '');
       item.dataset.value = opt.value;
-      item.textContent = opt.textContent;
+      const icon = STYLE_ICON_MAP[opt.value];
+      if (icon) item.innerHTML = icon + opt.textContent; else item.textContent = opt.textContent;
       const optStyle = opt.getAttribute('style');
       if (optStyle) item.setAttribute('style', item.getAttribute('style') ? item.getAttribute('style') + ';' + optStyle : optStyle);
       item.addEventListener('click', (e) => {
@@ -11158,6 +11171,7 @@ function autoCustomSelect(selectId) {
   'bgMode', 'patternMode', 'f_patTargetImg', 'f_font', 'f_fxType', 'f_glowBlendMode', 'f_shadowBlendMode',
   'f_mirrorRef', 'newEntranceType', 'newLoopType', 'newExitType', 'dhSendMode', 'dhSavedBotsSelect',
   'dhGuildSelect', 'dhChannelSelect', 'dhWebhookChoiceSelect', 'wmStyle', 'wmFont', 'wmMode', 'ftLayout',
+  'emojiStyleType', 'imageStyleType', 'batchStyleType', 'rolesStyleType',
   'cm_p_parentKey', 'newAccRole'
 ].forEach(autoCustomSelect);
 
