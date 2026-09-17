@@ -18741,37 +18741,18 @@ document.addEventListener('DOMContentLoaded', () => {
     off.width = w; off.height = h;
     const c = off.getContext('2d');
 
+    // Ważne: NIE progujemy tu kanału alfa na twarde 0/255 — oryginalna krawędź
+    // tekstu/kształtu jest antyaliasowana (płynne przejście alfa), a twarde
+    // progowanie zamienia gładkie krzywe w postrzępioną, schodkową krawędź.
     function silhouette(color){
       const sc = document.createElement('canvas');
       sc.width = src.w; sc.height = src.h;
       const sctx = sc.getContext('2d');
       sctx.drawImage(src.canvas, 0, 0);
-      
-      
-      
-      
-      const imgData = sctx.getImageData(0, 0, src.w, src.h);
-      const d = imgData.data;
-      for(let i = 3; i < d.length; i += 4){
-        d[i] = d[i] > 200 ? 255 : 0;
-      }
-      sctx.putImageData(imgData, 0, 0);
       sctx.globalCompositeOperation = 'source-in';
       sctx.fillStyle = color;
       sctx.fillRect(0, 0, src.w, src.h);
       return sc;
-    }
-
-    
-    
-    
-    function sharpenAlpha(ctx, cw, ch){
-      const imgData = ctx.getImageData(0, 0, cw, ch);
-      const d = imgData.data;
-      for(let i = 3; i < d.length; i += 4){
-        d[i] = d[i] > 12 ? 255 : 0;
-      }
-      ctx.putImageData(imgData, 0, 0);
     }
 
     const sorted = active.slice().sort((a,b)=>b.width-a.width);
@@ -18780,14 +18761,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const stampCanvas = document.createElement('canvas');
       stampCanvas.width = w; stampCanvas.height = h;
       const sctx = stampCanvas.getContext('2d');
-      const steps = Math.max(24, Math.round(o.width * 3));
+      // Gęstsze próbkowanie kątowe = gładszy, bardziej okrągły rozrost obrysu
+      const steps = Math.max(36, Math.round(o.width * 5));
       for(let i=0; i<steps; i++){
         const angle = (i/steps) * Math.PI*2;
         const dx = Math.cos(angle) * o.width;
         const dy = Math.sin(angle) * o.width;
         sctx.drawImage(sil, pad+dx, pad+dy);
       }
-      sharpenAlpha(sctx, w, h);
       c.drawImage(stampCanvas, 0, 0);
     });
 
